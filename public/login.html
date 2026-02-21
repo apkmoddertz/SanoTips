@@ -1,30 +1,100 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<title>Login</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SonaTips - Login</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <style>
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background: #1e1e2f;
+      font-family: Arial, sans-serif;
+    }
+    .login-container {
+      background: #2a2a3d;
+      padding: 2rem;
+      border-radius: 12px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.5);
+      width: 100%;
+      max-width: 400px;
+      text-align: center;
+    }
+    .login-container h2 {
+      color: gold;
+      margin-bottom: 1.5rem;
+    }
+    input {
+      width: 100%;
+      padding: 0.8rem;
+      margin-bottom: 1rem;
+      border-radius: 8px;
+      border: none;
+    }
+    button {
+      width: 100%;
+      padding: 0.8rem;
+      border: none;
+      border-radius: 8px;
+      background: gold;
+      color: #1e1e2f;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    .register-link {
+      margin-top: 1rem;
+      display: block;
+      color: #fff;
+      text-decoration: none;
+    }
+  </style>
 </head>
 <body>
+  <div class="login-container">
+    <h2>SonaTips Login</h2>
+    <input type="text" id="username" placeholder="Username" required>
+    <input type="password" id="password" placeholder="Password" required>
+    <button id="login-btn">Login</button>
+    <a href="/register.html" class="register-link">Register</a>
+    <div id="login-error" style="color:red;margin-top:1rem;"></div>
+  </div>
 
-<h2>Login</h2>
+  <script type="module">
+    import { getUsers } from "./firebase.js";
 
-<input type="email" id="email" placeholder="Email"><br><br>
-<input type="password" id="password" placeholder="Password"><br><br>
-<button onclick="login()">Login</button>
+    const loginBtn = document.getElementById("login-btn");
+    const usernameInput = document.getElementById("username");
+    const passwordInput = document.getElementById("password");
+    const errorDiv = document.getElementById("login-error");
 
-<script type="module">
-import { auth } from "./js/firebase.js";
-import { signInWithEmailAndPassword } from 
-"https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+    loginBtn.addEventListener("click", async () => {
+      const username = usernameInput.value.trim();
+      const password = passwordInput.value.trim();
+      errorDiv.textContent = "";
 
-window.login = async function () {
-  const email = document.getElementById("email").value;
-  const password = document.getElementById("password").value;
+      if(!username || !password){
+        errorDiv.textContent = "Please fill all fields.";
+        return;
+      }
 
-  await signInWithEmailAndPassword(auth, email, password);
-  alert("Login successful!");
-  window.location.href = "index.html";
-};
-</script>
+      try {
+        const users = await getUsers(); // Fetch all users from Firebase
+        const matched = users.find(u => u.username === username && u.password === password);
 
+        if(matched){
+          localStorage.setItem("user", JSON.stringify(matched));
+          window.location.href = "/index.html"; // Redirect to home page
+        } else {
+          errorDiv.textContent = "Invalid username or password.";
+        }
+      } catch(err){
+        console.error(err);
+        errorDiv.textContent = "Error connecting to server.";
+      }
+    });
+  </script>
 </body>
 </html>

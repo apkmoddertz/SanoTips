@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SonaTips - Register</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <div class="login-container">
+    <h2>Register</h2>
+    <input type="text" id="username" placeholder="Username" required>
+    <input type="password" id="password" placeholder="Password" required>
+    <button id="register-btn">Register</button>
+    <a href="/login.html" class="register-link">Already have an account? Login</a>
+    <div id="register-error" style="color:red;margin-top:1rem;"></div>
+  </div>
+
+  <script type="module">
+    import { addUser } from "./firebase.js";
+
+    const registerBtn = document.getElementById("register-btn");
+    const usernameInput = document.getElementById("username");
+    const passwordInput = document.getElementById("password");
+    const errorDiv = document.getElementById("register-error");
+
+    registerBtn.addEventListener("click", async () => {
+      const username = usernameInput.value.trim();
+      const password = passwordInput.value.trim();
+      errorDiv.textContent = "";
+
+      if(!username || !password){
+        errorDiv.textContent = "Please fill all fields.";
+        return;
+      }
+
+      try {
+        await addUser({ username, password });
+        alert("Registered successfully! Please login.");
+        window.location.href = "/login.html";
+      } catch(err){
+        console.error(err);
+        errorDiv.textContent = "Error registering user.";
+      }
+    });
+  </script>
+</body>
+</html>
