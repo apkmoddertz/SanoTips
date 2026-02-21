@@ -128,7 +128,15 @@ body {
   border-left: 4px solid #facc15;
   box-shadow: 0 3px 8px rgba(0,0,0,0.4);
 }
-
+.date-header {
+  text-align: center;
+  font-size: 14px;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: #facc15;
+  margin: 1rem 0 0.5rem 0;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+}
 .prediction-left {
   display: flex;
   flex-direction: column;
