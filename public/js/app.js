@@ -13,6 +13,21 @@ menuToggle.addEventListener("click", () => {
   sidebar.classList.toggle("show");
 });
 
+// Get status icon
+function getStatusIcon(status) {
+  const s = (status || "pending").toLowerCase();
+
+  if (s === "won" || s === "win") {
+    return `<div class="status-icon win">✔</div>`;
+  }
+
+  if (s === "lost" || s === "lose") {
+    return `<div class="status-icon lose">✖</div>`;
+  }
+
+  return `<div class="status-icon pending">⏳</div>`;
+}
+
 // Render matches
 async function renderPredictions(category) {
   currentCategory = category;
@@ -36,6 +51,7 @@ async function renderPredictions(category) {
     filtered.forEach(p => {
       const oddsValue = Number(p.odds || p.odd || 0);
       const formattedDate = new Date(p.date).toLocaleString();
+      const statusIcon = getStatusIcon(p.status);
 
       const card = document.createElement("div");
       card.className = "prediction-card";
@@ -46,24 +62,26 @@ async function renderPredictions(category) {
           <span class="date">${formattedDate}</span>
         </div>
 
+        <!-- Teams Row -->
         <div class="teams">
-          <div class="team">${p.homeTeam || "Home"}</div>
+          <div class="team home">${p.homeTeam || "Home"}</div>
           <div class="vs">VS</div>
-          <div class="team">${p.awayTeam || "Away"}</div>
+          <div class="team away">${p.awayTeam || "Away"}</div>
         </div>
 
+        <!-- Prediction Row -->
         <div class="prediction-box">
-          <div>
-            <small>Prediction</small>
-            <div class="prediction-text">${p.prediction}</div>
+          
+          <div class="prediction-left">
+            <small class="prediction-label">Prediction</small>
+            <div class="prediction-text">${p.prediction || "-"}</div>
           </div>
-          <div class="odds">
-            ${oddsValue.toFixed(2)}
-          </div>
-        </div>
 
-        <div class="status ${p.status}">
-          ${p.status || "pending"}
+          <div class="prediction-right">
+            ${statusIcon}
+            <div class="odds">${oddsValue.toFixed(2)}</div>
+          </div>
+
         </div>
       `;
 
