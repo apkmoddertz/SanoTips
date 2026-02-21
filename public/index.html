@@ -3,151 +3,38 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Sano Match Card</title>
+<title>SanoTips - Football Predictions</title>
 
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
 
-<style>
-*{
-  margin:0;
-  padding:0;
-  box-sizing:border-box;
-  font-family:'Inter',sans-serif;
-}
+<!-- Firebase (MODULAR VERSION) -->
+<script type="module" src="js/app.js"></script>
 
-body{
-  background:#0f1115;
-  color:#fff;
-  padding:20px;
-}
-
-/* Card */
-.card{
-  background:#181a20;
-  border-radius:18px;
-  padding:22px;
-  margin-bottom:20px;
-  border:1px solid rgba(255,255,255,0.05);
-  transition:.3s;
-}
-
-.card:hover{
-  border:1px solid rgba(16,185,129,.4);
-  transform:translateY(-3px);
-}
-
-/* Top Section */
-.top{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  margin-bottom:15px;
-}
-
-.league{
-  font-size:12px;
-  color:#9ca3af;
-  font-weight:700;
-  text-transform:uppercase;
-  letter-spacing:.5px;
-}
-
-.time{
-  font-size:12px;
-  color:#6b7280;
-}
-
-/* Teams Section */
-.teams{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  margin:20px 0;
-}
-
-.team{
-  text-align:center;
-  width:40%;
-}
-
-.team-name{
-  font-size:17px;
-  font-weight:700;
-}
-
-.vs{
-  font-weight:800;
-  color:#374151;
-  font-size:14px;
-}
-
-/* Prediction Box */
-.prediction-box{
-  background:#20222a;
-  border-radius:14px;
-  padding:16px;
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  border-left:5px solid #facc15;
-}
-
-.prediction-left{
-  display:flex;
-  flex-direction:column;
-}
-
-.prediction-label{
-  font-size:11px;
-  text-transform:uppercase;
-  color:#9ca3af;
-  margin-bottom:6px;
-}
-
-.prediction-value{
-  font-size:18px;
-  font-weight:700;
-  color:#10b981;
-}
-
-.odds{
-  font-size:20px;
-  font-weight:800;
-}
-</style>
 </head>
 <body>
 
-<h2 style="margin-bottom:20px;">🔥 Today’s Tips</h2>
+<header class="navbar">
+  <h1>SanoTips</h1>
+  <button id="menu-toggle">☰</button>
+</header>
 
-<div class="card">
+<nav id="sidebar" class="sidebar">
+  <ul>
+    <li data-category="free">Free</li>
+    <li data-category="safe">Safe</li>
+    <li data-category="fixed">Fixed</li>
+  </ul>
+</nav>
 
-  <div class="top">
-    <div class="league">Premier League</div>
-    <div class="time">21 Feb • 20:30</div>
-  </div>
+<main id="predictions" class="predictions-container">
+  <p>Loading predictions...</p>
+</main>
 
-  <div class="teams">
-    <div class="team">
-      <div class="team-name">Liverpool</div>
-    </div>
-
-    <div class="vs">VS</div>
-
-    <div class="team">
-      <div class="team-name">Man United</div>
-    </div>
-  </div>
-
-  <div class="prediction-box">
-    <div class="prediction-left">
-      <div class="prediction-label">Prediction</div>
-      <div class="prediction-value">Home Win</div>
-    </div>
-    <div class="odds">1.50</div>
-  </div>
-
-</div>
+<footer class="bottom-menu">
+  <button data-category="free">Free</button>
+  <button data-category="safe">Safe</button>
+  <button data-category="fixed">Fixed</button>
+</footer>
 
 </body>
 </html>
