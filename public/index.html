@@ -25,6 +25,18 @@ header h1{margin:0 0 12px;font-size:22px;background:linear-gradient(90deg,#facc1
 .loading{border:4px solid rgba(255,255,255,0.1);border-top:4px solid #facc15;border-radius:50%;width:40px;height:40px;animation:spin 1s linear infinite;margin:60px auto;}
 @keyframes spin{100%{transform:rotate(360deg);}}
 .empty{text-align:center;padding:30px;color:#94a3b8;}
+
+/* ===== Login Modal ===== */
+#loginModal{
+  position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.7);display:flex;justify-content:center;align-items:center;z-index:2000;
+}
+#loginModal .modal-content{
+  background:#111827;padding:20px;border-radius:12px;width:90%;max-width:350px;color:#fff;display:flex;flex-direction:column;gap:10px;
+}
+#loginModal input{padding:10px;border-radius:6px;border:none;outline:none;font-size:14px;}
+#loginModal button{padding:10px;border:none;border-radius:6px;background:#f59e0b;color:#111827;font-weight:600;cursor:pointer;}
+#loginModal .toggle-link{color:#facc15;text-decoration:underline;cursor:pointer;text-align:center;font-size:13px;}
+#loginModal .message{text-align:center;font-size:14px;min-height:18px;}
 </style>
 </head>
 <body>
@@ -40,9 +52,22 @@ header h1{margin:0 0 12px;font-size:22px;background:linear-gradient(90deg,#facc1
 
 <main id="predictions"><div class="loading"></div></main>
 
+<!-- ===== Login Modal ===== -->
+<div id="loginModal" style="display:none;">
+  <div class="modal-content">
+    <h2 id="modalTitle">Login</h2>
+    <div class="message" id="modalMessage"></div>
+    <input type="email" id="modalEmail" placeholder="Email">
+    <input type="password" id="modalPassword" placeholder="Password">
+    <button id="modalButton">Login</button>
+    <div class="toggle-link" id="toggleLogin">Don't have an account? Register</div>
+  </div>
+</div>
+
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getFirestore, collection, getDocs, query, where } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { getFirestore, collection, getDocs, query, where, addDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
 // 🔥 Firebase config
 const firebaseConfig = {
@@ -53,72 +78,117 @@ const firebaseConfig = {
   messagingSenderId: "241701625823",
   appId: "1:241701625823:web:d4d7d9362e0207e5a32e6a"
 };
+
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
+const auth = getAuth(app);
 
 const container = document.getElementById("predictions");
 const buttons = document.querySelectorAll(".menu button");
-let currentCategory = "free";
-let currentUserPlan = "free";
 
-// ✅ Redirect to login if not logged in
+// ===== Login Modal Elements =====
+const loginModal = document.getElementById("loginModal");
+const modalTitle = document.getElementById("modalTitle");
+const modalMessage = document.getElementById("modalMessage");
+const modalEmail = document.getElementById("modalEmail");
+const modalPassword = document.getElementById("modalPassword");
+const modalButton = document.getElementById("modalButton");
+const toggleLogin = document.getElementById("toggleLogin");
+
+let isLogin = true;
+let currentCategory="free";
+let currentUserPlan="free";
+
+// ===== Check local user =====
 const localUser = JSON.parse(localStorage.getItem("user"));
-if(!localUser){ window.location.href="login.html"; }
-
-// ✅ Get user subscription
-async function getUserSubscription() {
-  const q = query(collection(db,"users"), where("email","==",localUser.email));
-  const snap = await getDocs(q);
-  if(snap.empty) return "free";
-  let plan = "free";
-  snap.forEach(doc=>plan = (doc.data().subscription || "free").toLowerCase());
-  return plan;
+if(!localUser){
+  loginModal.style.display="flex";
+} else {
+  currentUserPlan = localUser.subscription || "free";
+  render(currentCategory);
 }
 
-// 🔥 Fetch matches
+// ===== Toggle login/register =====
+toggleLogin.addEventListener("click", ()=>{
+  isLogin = !isLogin;
+  modalTitle.textContent = isLogin ? "Login" : "Register";
+  modalButton.textContent = isLogin ? "Login" : "Register";
+  toggleLogin.textContent = isLogin ? "Don't have an account? Register" : "Already have account? Login";
+  modalMessage.textContent="";
+});
+
+// ===== Login/Register Handler =====
+modalButton.addEventListener("click", async()=>{
+  const email = modalEmail.value.trim();
+  const password = modalPassword.value.trim();
+  if(!email || !password){ modalMessage.textContent="Enter email & password"; return; }
+  modalMessage.textContent="Loading...";
+  try{
+    let userCredential;
+    if(isLogin){
+      userCredential = await signInWithEmailAndPassword(auth,email,password);
+    } else {
+      userCredential = await createUserWithEmailAndPassword(auth,email,password);
+      // Add new user to Firestore
+      await addDoc(collection(db,"users"),{
+        email:userCredential.user.email,
+        subscription:"free",
+        createdAt:new Date().toISOString()
+      });
+    }
+
+    // Get subscription from Firestore
+    const q = query(collection(db,"users"),where("email","==",userCredential.user.email));
+    const snap = await getDocs(q);
+    let subscription="free";
+    if(!snap.empty){ snap.forEach(d=>subscription=d.data().subscription||"free"); }
+    
+    localStorage.setItem("user",JSON.stringify({email:userCredential.user.email,subscription}));
+    currentUserPlan = subscription;
+
+    loginModal.style.display="none";
+    render(currentCategory);
+  } catch(err){
+    console.error(err);
+    modalMessage.textContent=err.message;
+  }
+});
+
+// ===== Fetch Matches =====
 async function getMatches(){ 
   const snap = await getDocs(collection(db,"matches"));
   const data=[]; snap.forEach(d=>data.push(d.data())); return data;
 }
 
-// 🔒 Should blur card
+// ===== Determine if should blur =====
 function shouldBlur(matchCategory){
-  const levels = { free:1, safe:2, fixed:3 };
-  const planLevels = { free:1, safe:2, fixed:3 };
-  const userLevel = planLevels[currentUserPlan] || 1;
-  let matchLevel = levels[matchCategory] || 1;
-
-  // Fixed users cannot see safe
-  if(currentUserPlan==="fixed" && matchCategory==="safe") matchLevel = 99;
-
-  return userLevel < matchLevel;
+  if(matchCategory==="free") return false;
+  if(matchCategory==="safe") return !(currentUserPlan==="safe"||currentUserPlan==="fixed");
+  if(matchCategory==="fixed") return !(currentUserPlan==="fixed");
+  return true;
 }
 
-// 🔥 Render function
+// ===== Render =====
 async function render(category){
   currentCategory = category;
   container.innerHTML='<div class="loading"></div>';
   const matches = await getMatches();
-
-  const filtered = matches.filter(m => (m.category||"").toLowerCase() === category.toLowerCase());
+  const filtered = matches.filter(m => (m.category||"").toLowerCase()===category.toLowerCase());
   filtered.sort((a,b)=> new Date(b.date)-new Date(a.date));
   container.innerHTML="";
   if(!filtered.length){ container.innerHTML='<div class="empty">No matches available</div>'; return; }
 
   let lastDate=null;
   filtered.forEach(m=>{
-    const matchDate = new Date(m.date);
+    const matchDate=new Date(m.date);
     const dateString = matchDate.getDate().toString().padStart(2,'0')+" "+
                        matchDate.toLocaleString('default',{month:'short'})+" "+
                        matchDate.getFullYear();
-    if(dateString!==lastDate){ 
-      const dateDiv = document.createElement("div"); 
-      dateDiv.className="date-header"; 
-      dateDiv.textContent=dateString; 
-      container.appendChild(dateDiv); 
-      lastDate=dateString; 
+    if(dateString!==lastDate){
+      const dateDiv=document.createElement("div");
+      dateDiv.className="date-header"; dateDiv.textContent=dateString; container.appendChild(dateDiv);
+      lastDate=dateString;
     }
-
     const hideVIP = shouldBlur(m.category);
     const card = document.createElement("div");
     card.className="card"+(hideVIP?" vip":"");
@@ -141,13 +211,7 @@ async function render(category){
   });
 }
 
-// 🛠 Initial load
-(async()=>{
-  currentUserPlan = await getUserSubscription();
-  render(currentCategory);
-})();
-
-// 🔁 Buttons
+// ===== Menu buttons =====
 buttons.forEach(btn=>{
   btn.addEventListener("click",()=>{
     buttons.forEach(b=>b.classList.remove("active"));
@@ -155,7 +219,7 @@ buttons.forEach(btn=>{
     render(btn.dataset.category);
   });
 });
-</script>
 
+</script>
 </body>
 </html>
