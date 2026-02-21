@@ -81,20 +81,43 @@ body {
   color: #9ca3af;
 }
 
-/* Teams Layout */
+/* ========================= */
+/* PERFECT TEAM ALIGNMENT */
+/* ========================= */
+
 .card-body .teams {
-  display: flex;
-  justify-content: space-between;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
   align-items: center;
-  font-size: 1.1rem;
-  font-weight: 700;
+  gap: 10px;
   margin-bottom: 1rem;
 }
 
+/* Team containers */
+.team {
+  font-size: 1.1rem;
+  font-weight: 700;
+  line-height: 1.3;
+  word-break: break-word;
+}
+
+/* Home = left aligned */
+.team.home {
+  text-align: left;
+}
+
+/* Away = right aligned */
+.team.away {
+  text-align: right;
+}
+
+/* VS always centered */
 .card-body .vs {
   font-size: 0.8rem;
-  font-weight: 800;
+  font-weight: 900;
+  letter-spacing: 2px;
   color: #374151;
+  text-align: center;
 }
 
 /* Prediction Box */
