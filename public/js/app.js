@@ -1,45 +1,48 @@
+import { getPredictions } from "./firebase.js";
+import { hasAccess, isAdmin } from "./users.js";
+
 const sidebar = document.getElementById("sidebar");
 const menuToggle = document.getElementById("menu-toggle");
-menuToggle.addEventListener("click", () => {
-  sidebar.classList.toggle("show");
-});
-
-// Example static predictions
-const predictions = [
-  { league: "Premier League", home: "Liverpool", away: "Man Utd", date: "2026-02-20", prediction: "Home Win", category: "free", status: "pending" },
-  { league: "La Liga", home: "Real Madrid", away: "Barcelona", date: "2026-02-21", prediction: "Away Win", category: "safe", status: "pending" }
-];
-
 const predictionsContainer = document.getElementById("predictions");
+const premiumModal = document.getElementById("premium-modal");
 
-function renderPredictions(category) {
+menuToggle.addEventListener("click", () => sidebar.classList.toggle("show"));
+
+let currentCategory = "free";
+
+// Render predictions
+async function renderPredictions(category) {
+  currentCategory = category;
+  predictionsContainer.innerHTML = "<p>Loading...</p>";
+  const allPredictions = await getPredictions();
+  const filtered = allPredictions.filter(p => p.category.toLowerCase() === category.toLowerCase());
+
+  if (!filtered.length) {
+    predictionsContainer.innerHTML = `<div class="empty-msg">No predictions available.</div>`;
+    return;
+  }
+
   predictionsContainer.innerHTML = "";
-  const filtered = predictions.filter(p => p.category === category);
   filtered.forEach(p => {
     const card = document.createElement("div");
     card.className = "prediction-card";
+
+    let locked = !hasAccess(p.category);
     card.innerHTML = `
-      <h3>${p.league}: ${p.home} vs ${p.away}</h3>
-      <p>Date: ${p.date}</p>
-      <p>Prediction: ${p.prediction}</p>
+      <h3>${p.league}: ${p.homeTeam} vs ${p.awayTeam}</h3>
+      <p>Date: ${new Date(p.date).toLocaleString()}</p>
+      <p>Prediction: ${locked ? "🔒 Premium" : p.prediction}</p>
       <p>Status: ${p.status}</p>
+      ${isAdmin() ? `<button class="edit-btn" data-id="${p.id}">Edit</button>` : ""}
     `;
     predictionsContainer.appendChild(card);
   });
 }
 
-// Default view
-renderPredictions("free");
-
-// Bottom menu click
-document.querySelectorAll(".bottom-menu button").forEach(btn => {
-  btn.addEventListener("click", () => renderPredictions(btn.dataset.category));
+// Sidebar buttons
+document.querySelectorAll(".sidebar li, .bottom-menu button").forEach(el => {
+  el.addEventListener("click", () => renderPredictions(el.dataset.category));
 });
 
-// Sidebar click
-document.querySelectorAll(".sidebar li").forEach(li => {
-  li.addEventListener("click", () => {
-    renderPredictions(li.dataset.category);
-    sidebar.classList.remove("show");
-  });
-});
+// Initial render
+renderPredictions(currentCategory);
