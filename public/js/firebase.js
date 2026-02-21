@@ -1,7 +1,6 @@
-// Path: public/js/firebase.js
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-app.js";
-import { getFirestore, collection, addDoc, getDocs, query, orderBy, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-firestore.js";
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-auth.js";
+// Firebase config
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
+import { getFirestore, collection, getDocs, serverTimestamp, addDoc } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyC0BSUvubGtHxeHZ_pnh776bzoGKGxXNbU",
@@ -14,7 +13,20 @@ const firebaseConfig = {
 };
 
 const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
-const auth = getAuth(app);
+export const db = getFirestore(app);
 
-export { app, db, auth, collection, addDoc, getDocs, query, orderBy, serverTimestamp, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut };
+// Fetch all predictions
+export async function getPredictions() {
+  const querySnapshot = await getDocs(collection(db, "matches"));
+  const data = [];
+  querySnapshot.forEach(doc => {
+    data.push({ id: doc.id, ...doc.data() });
+  });
+  return data;
+}
+
+// Add prediction (admin only)
+export async function addPrediction(pred) {
+  pred.createdAt = serverTimestamp();
+  await addDoc(collection(db, "matches"), pred);
+}
