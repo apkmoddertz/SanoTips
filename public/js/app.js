@@ -1,3 +1,5 @@
+// public/js/app.js
+
 import { getMatches } from "./firebase.js";
 
 // --------------------- Authentication ---------------------
@@ -35,20 +37,30 @@ function getStatusIcon(status) {
   return statusIcons.pending;
 }
 
-// --------------------- VIP Subscription Check ---------------------
-function hasActiveSubscription(user, category) {
-  if (category === "free") return true; // Free matches always visible
-  if (!user.billing || !user.expires) return false; // No subscription
-  const expireDate = new Date(user.expires);
-  const now = new Date();
-  if (expireDate < now) return false; // Expired
-  return user.subscription.toLowerCase() === category.toLowerCase();
+// --------------------- Permission Check ---------------------
+function canViewMatch(user, category, status) {
+  const isVipCategory = ["safe", "fixed"].includes(category.toLowerCase());
+  const isPending = (status || "").toLowerCase() === "pending";
+
+  // Free users see only 'free'
+  if (user.subscription.toLowerCase() === "free" && category.toLowerCase() !== "free") {
+    return false;
+  }
+
+  // VIP users: lock pending if subscription expired
+  if (isVipCategory && isPending) {
+    if (!user.billing || !user.expires) return false;
+    const expireDate = new Date(user.expires);
+    if (expireDate < new Date()) return false;
+  }
+
+  return true;
 }
 
-// --------------------- Render Matches Grouped by Date ---------------------
+// --------------------- Render Matches ---------------------
 async function renderPredictions(category) {
   currentCategory = category;
-  predictionsContainer.innerHTML = `<div class="loading-spinner"></div>`; // Centered spinner
+  predictionsContainer.innerHTML = `<div class="loading-spinner"></div>`;
 
   try {
     const predictions = await getMatches();
@@ -89,10 +101,8 @@ async function renderPredictions(category) {
       const card = document.createElement("div");
       card.className = "prediction-card";
 
-      // VIP pending lock
-      const isVipCategory = ["safe", "fixed"].includes(category.toLowerCase());
-      const isPending = (p.status || "").toLowerCase() === "pending";
-      const isLocked = isVipCategory && isPending && !hasActiveSubscription(user, category);
+      const canView = canViewMatch(user, category, p.status);
+      const isLocked = !canView;
 
       card.innerHTML = `
         <div class="card-header">
@@ -119,12 +129,15 @@ async function renderPredictions(category) {
             ${statusIcon}
             <div class="odds">${isLocked ? "--" : oddsValue.toFixed(2)}</div>
           </div>
+          ${isLocked ? `<button class="subscribe-btn">Subscribe</button>` : ""}
         </div>
       `;
 
-      // If locked, open subscription modal on click
+      // Locked card opens subscription page
       if (isLocked) {
-        card.addEventListener("click", () => {
+        const btn = card.querySelector(".subscribe-btn");
+        btn?.addEventListener("click", e => {
+          e.stopPropagation();
           window.location.href = "/subscribe.html";
         });
       }
