@@ -11,40 +11,22 @@ menuToggle.addEventListener("click", () => {
   sidebar.classList.toggle("show");
 });
 
-// Status SVGs with proper stroke animation
+// SVG icons for status
 const statusIcons = {
-  pending: `
-    <svg class="status-icon" viewBox="0 0 24 24" fill="none" stroke="#facc15" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-      <circle cx="12" cy="12" r="10"/>
-      <path d="M12 6v6l4 2"/>
-    </svg>
-  `,
-  win: `
-    <svg class="status-icon" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-      <path d="M20 6L9 17l-5-5" stroke-dasharray="30" stroke-dashoffset="30">
-        <animate attributeName="stroke-dashoffset" from="30" to="0" dur="0.5s" fill="freeze"/>
-      </path>
-    </svg>
-  `,
-  lose: `
-    <svg class="status-icon" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-      <line x1="18" y1="6" x2="6" y2="18"/>
-      <line x1="6" y1="6" x2="18" y2="18"/>
-    </svg>
-  `
-};
-
-// VS background colors
-const vsColors = {
-  pending: 'rgba(250, 204, 21, 0.3)',
-  win: 'rgba(16,185,129,0.3)',
-  lose: 'rgba(239,68,68,0.3)'
+  pending: `<svg xmlns="http://www.w3.org/2000/svg" class="status-icon" viewBox="0 0 24 24" fill="none" stroke="#facc15" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>`,
+  win: `<svg xmlns="http://www.w3.org/2000/svg" class="status-icon" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>`,
+  lose: `<svg xmlns="http://www.w3.org/2000/svg" class="status-icon" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>`
 };
 
 // Get icon based on match status
 function getStatusIcon(status) {
-  const s = (status || "pending").toLowerCase();
-  return statusIcons[s] || statusIcons.pending;
+  if (!status) return statusIcons.pending;
+  const s = status.trim().toLowerCase();
+  const winValues = ["win", "won", "winning"];
+  const loseValues = ["lose", "lost", "losing"];
+  if (winValues.includes(s)) return statusIcons.win;
+  if (loseValues.includes(s)) return statusIcons.lose;
+  return statusIcons.pending;
 }
 
 // Render matches
@@ -65,9 +47,7 @@ async function renderPredictions(category) {
     filtered.forEach(p => {
       const oddsValue = Number(p.odds || p.odd || 0);
       const formattedDate = new Date(p.date).toLocaleString();
-      const status = (p.status || "pending").toLowerCase();
-      const statusIcon = getStatusIcon(status);
-      const vsBgColor = vsColors[status] || vsColors.pending;
+      const statusIcon = getStatusIcon(p.status);
 
       const card = document.createElement("div");
       card.className = "prediction-card";
@@ -82,7 +62,7 @@ async function renderPredictions(category) {
           <table>
             <tr>
               <td class="team home">${p.homeTeam || "Home"}</td>
-              <td class="vs" style="background:${vsBgColor};">VS</td>
+              <td class="vs">VS</td>
               <td class="team away">${p.awayTeam || "Away"}</td>
             </tr>
           </table>
