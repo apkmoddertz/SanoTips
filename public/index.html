@@ -4,9 +4,12 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>SanoTips - Football Predictions</title>
+
 <link rel="stylesheet" href="css/style.css">
-<script type="module" src="js/firebase.js"></script>
-<script type="module" src="js/app.js" defer></script>
+
+<!-- Firebase (MODULAR VERSION) -->
+<script type="module" src="js/app.js"></script>
+
 </head>
 <body>
 
@@ -15,7 +18,7 @@
   <button id="menu-toggle">☰</button>
 </header>
 
-<nav id="sidebar" class="sidebar hidden">
+<nav id="sidebar" class="sidebar">
   <ul>
     <li data-category="free">Free</li>
     <li data-category="safe">Safe</li>
@@ -24,7 +27,7 @@
 </nav>
 
 <main id="predictions" class="predictions-container">
-  <!-- Predictions will be dynamically loaded here -->
+  <p>Loading predictions...</p>
 </main>
 
 <footer class="bottom-menu">
