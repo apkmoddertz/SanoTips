@@ -5,10 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>SanoTips - Football Predictions</title>
 <link rel="stylesheet" href="css/style.css">
-<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js"></script>
-<script src="js/firebase.js" defer></script>
-<script src="js/app.js" defer></script>
+<script type="module" src="js/app.js" defer></script>
 </head>
 <body>
 
@@ -26,8 +23,15 @@
 </nav>
 
 <main id="predictions" class="predictions-container">
-  <!-- Predictions will be dynamically loaded here -->
+  <!-- Predictions loaded here -->
 </main>
+
+<div id="premium-modal" class="modal hidden">
+  <div class="modal-content">
+    <p>This is premium content. Upgrade to view.</p>
+    <button onclick="document.getElementById('premium-modal').classList.add('hidden')">Close</button>
+  </div>
+</div>
 
 <footer class="bottom-menu">
   <button data-category="free">Free</button>
