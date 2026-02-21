@@ -7,21 +7,31 @@ const predictionsContainer = document.getElementById("predictions");
 let currentCategory = "free";
 
 // Toggle sidebar
-menuToggle.addEventListener("click", () => sidebar.classList.toggle("show"));
+menuToggle.addEventListener("click", () => {
+  sidebar.classList.toggle("show");
+});
 
-// Animated SVG icons for status
+// Status SVGs with animation
 const statusIcons = {
-  pending: `<svg class="status-icon pending" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#facc15" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>`,
-  win: `<svg class="status-icon win" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"><animate attributeName="stroke" values="#10b981;#34d399;#10b981" dur="1.5s" repeatCount="indefinite"/></path></svg>`,
-  lose: `<svg class="status-icon lose" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>`
+  pending: `<svg class="status-icon" viewBox="0 0 24 24" fill="none" stroke="#facc15" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>`,
+  win: `<svg class="status-icon" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"><animate attributeName="stroke-dashoffset" from="20" to="0" dur="0.5s" fill="freeze"/></path></svg>`,
+  lose: `<svg class="status-icon" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>`
 };
 
+// VS background colors
+const vsColors = {
+  pending: 'rgba(250, 204, 21, 0.3)',
+  win: 'rgba(16,185,129,0.3)',
+  lose: 'rgba(239,68,68,0.3)'
+};
+
+// Get icon based on match status
 function getStatusIcon(status) {
   const s = (status || "pending").toLowerCase();
   return statusIcons[s] || statusIcons.pending;
 }
 
-// Render predictions
+// Render matches
 async function renderPredictions(category) {
   currentCategory = category;
   predictionsContainer.innerHTML = "<p>Loading...</p>";
@@ -39,6 +49,9 @@ async function renderPredictions(category) {
     filtered.forEach(p => {
       const oddsValue = Number(p.odds || p.odd || 0);
       const formattedDate = new Date(p.date).toLocaleString();
+      const status = (p.status || "pending").toLowerCase();
+      const statusIcon = getStatusIcon(status);
+      const vsBgColor = vsColors[status] || vsColors.pending;
 
       const card = document.createElement("div");
       card.className = "prediction-card";
@@ -46,14 +59,14 @@ async function renderPredictions(category) {
       card.innerHTML = `
         <div class="card-header">
           <span class="league">${p.league || "-"}</span>
-          <span class="date" onselectstart="return false;">${formattedDate}</span>
+          <span class="date">${formattedDate}</span>
         </div>
 
         <div class="teams-table">
           <table>
             <tr>
               <td class="team home">${p.homeTeam || "Home"}</td>
-              <td class="vs">VS</td>
+              <td class="vs" style="background:${vsBgColor};">VS</td>
               <td class="team away">${p.awayTeam || "Away"}</td>
             </tr>
           </table>
@@ -65,29 +78,34 @@ async function renderPredictions(category) {
             <div class="prediction-text">${p.prediction || "-"}</div>
           </div>
           <div class="prediction-right">
-            ${getStatusIcon(p.status)}
+            ${statusIcon}
             <div class="odds">${oddsValue.toFixed(2)}</div>
           </div>
         </div>
       `;
-
       predictionsContainer.appendChild(card);
     });
 
-  } catch (err) {
-    console.error(err);
+  } catch (error) {
+    console.error("Error loading predictions:", error);
     predictionsContainer.innerHTML = "<div class='error-msg'>Error loading predictions.</div>";
   }
 }
 
-// Sidebar & Bottom menu
+// Sidebar click
 document.querySelectorAll(".sidebar li").forEach(li => {
   li.addEventListener("click", () => {
     renderPredictions(li.dataset.category);
     sidebar.classList.remove("show");
   });
 });
-document.querySelectorAll(".bottom-menu button").forEach(btn => btn.addEventListener("click", () => renderPredictions(btn.dataset.category)));
+
+// Bottom menu click
+document.querySelectorAll(".bottom-menu button").forEach(btn => {
+  btn.addEventListener("click", () => {
+    renderPredictions(btn.dataset.category);
+  });
+});
 
 // Initial load
 renderPredictions(currentCategory);
