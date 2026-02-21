@@ -7,7 +7,7 @@
 <style>
 body{font-family:'Poppins',sans-serif;background:linear-gradient(135deg,#fcd34d,#fbbf24);margin:0;height:100vh;display:flex;justify-content:center;align-items:center;}
 .auth-container{width:100%;max-width:400px;background:#fff;border-radius:16px;padding:2rem;box-shadow:0 10px 25px rgba(0,0,0,0.2);position:relative;}
-.auth-container h1{text-align:center;color:#f59e0b;margin-bottom:1.5rem;}
+.auth-container h1{text-align:center;color:#f59e0b;margin-bottom:1.5rem;font-size:1.8rem;}
 form{display:flex;flex-direction:column;gap:1rem;}
 input{padding:0.75rem 1rem;border-radius:8px;border:1px solid #ddd;font-size:1rem;outline:none;}
 input:focus{border-color:#f59e0b;}
@@ -37,7 +37,7 @@ button:hover{background:#d97706;}
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-import { getFirestore, collection, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 // 🔥 FIREBASE CONFIG
 const firebaseConfig = {
@@ -48,6 +48,7 @@ const firebaseConfig = {
   messagingSenderId: "241701625823",
   appId: "1:241701625823:web:d4d7d9362e0207e5a32e6a"
 };
+
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
@@ -78,36 +79,49 @@ authForm.addEventListener('submit', async (e) => {
 
   try {
     let userCredential;
-    if(isLogin){
+
+    if (isLogin) {
       userCredential = await signInWithEmailAndPassword(auth, email, password);
     } else {
       userCredential = await createUserWithEmailAndPassword(auth, email, password);
-      // Add user to Firestore
+      // Add user to Firestore on registration
       await setDoc(doc(db,"users",userCredential.user.uid), {
         email: userCredential.user.email,
-        subscription: "free",
-        createdAt: new Date().toISOString()
+        subscription: "free", // default plan
+        createdAt: new Date().toISOString(),
+        status: "active"
       });
     }
 
+    // 🔥 Fetch subscription
+    const userRef = doc(db,"users",userCredential.user.uid);
+    const userSnap = await getDoc(userRef);
+    let subscription = "free";
+    if(userSnap.exists()){
+      subscription = userSnap.data().subscription || "free";
+    }
+
+    // 🔥 Save user locally
     localStorage.setItem("user", JSON.stringify({
       email: userCredential.user.email,
-      uid: userCredential.user.uid
+      uid: userCredential.user.uid,
+      subscription
     }));
 
     messageDiv.innerHTML = `<div class="success-msg">Success! Redirecting...</div>`;
-    setTimeout(()=>window.location.href="index.html",1000);
+    setTimeout(()=> window.location.href="index.html",1000);
 
   } catch(err){
-    messageDiv.innerHTML = `<div class="error-msg">${err.message}</div>`;
     console.error(err);
+    messageDiv.innerHTML = `<div class="error-msg">${err.message}</div>`;
   }
 });
 
-// Auto redirect if logged in
+// Auto redirect if already logged in
 const existingUser = JSON.parse(localStorage.getItem("user"));
-if(existingUser) window.location.href="index.html";
-
+if(existingUser){
+  window.location.href = "index.html";
+}
 </script>
 </body>
 </html>
