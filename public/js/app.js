@@ -49,12 +49,17 @@ async function renderPredictions(category) {
     }
 
     let lastDate = null;
+    const monthNames = ["JAN","FEB","MAR","APR","MAY","JUN","JUL","AUG","SEP","OCT","NOV","DEC"];
 
     filtered.forEach(p => {
       const oddsValue = Number(p.odds || p.odd || 0);
       const matchDate = new Date(p.date);
-      const dateString = matchDate.toLocaleDateString(); // "21/02/2026"
-      const formattedDate = matchDate.toLocaleString();
+
+      const day = matchDate.getDate().toString().padStart(2,'0');
+      const month = monthNames[matchDate.getMonth()];
+      const year = matchDate.getFullYear();
+      const dateString = `${day}/${month}/${year}`;
+
       const statusIcon = getStatusIcon(p.status);
 
       // Add date header if it's a new date
@@ -73,7 +78,7 @@ async function renderPredictions(category) {
       card.innerHTML = `
         <div class="card-header">
           <span class="league">${p.league || "-"}</span>
-          <span class="date">${formattedDate}</span>
+          <span class="date">${dateString}</span>
         </div>
 
         <div class="teams-table">
