@@ -10,18 +10,28 @@
 
 <link rel="stylesheet" href="css/style.css">
 
-<script type="module" src="js/app.js"></script>
 <style>
-/* ===== Fixed Header ===== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+body {
+  background: #f4f6f9;
+}
+
+/* ===== HEADER ===== */
 .navbar {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
-  background: #fff;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  background: #ffffff;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.1);
   z-index: 1000;
-  padding: 0.5rem 1rem;
+  padding: 12px 15px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -29,70 +39,108 @@
 
 .navbar h1 {
   font-size: 1.3rem;
-  font-weight: 600;
+  font-weight: 700;
   color: #f59e0b;
-  margin-bottom: 0.5rem;
+  margin-bottom: 10px;
 }
 
+/* ===== CATEGORY NAV ===== */
 .category-nav {
   display: flex;
-  justify-content: space-around;
+  justify-content: space-between;
   width: 100%;
-  max-width: 400px;
-  margin-bottom: 0.5rem;
+  max-width: 420px;
 }
 
 .category-btn {
+  flex: 1;
   background: none;
   border: none;
-  padding: 0.5rem 0.8rem;
-  font-size: 1rem;
-  font-weight: 500;
+  padding: 8px 5px;
+  font-size: 0.9rem;
+  font-weight: 600;
   cursor: pointer;
   position: relative;
+  color: #444;
   display: flex;
+  justify-content: center;
   align-items: center;
-  gap: 0.3rem;
-  color: #333;
+  gap: 5px;
   transition: 0.3s;
 }
 
 .category-btn.active {
   color: #f59e0b;
-  font-weight: 600;
 }
 
 .category-btn.active::after {
   content: '';
   position: absolute;
-  bottom: 0;
-  left: 10%;
-  width: 80%;
+  bottom: -4px;
+  width: 70%;
   height: 3px;
   background: #f59e0b;
-  border-radius: 2px;
+  border-radius: 10px;
 }
 
 .category-btn:hover {
   color: #fbbf24;
 }
 
-/* Members feed */
+/* ===== MEMBERS FEED ===== */
 .members-feed {
-  font-size: 0.85rem;
-  color: #555;
+  margin-top: 8px;
+  font-size: 0.8rem;
+  color: #666;
   text-align: center;
   min-height: 18px;
+  overflow: hidden;
+  white-space: nowrap;
 }
 
-/* Add top padding to predictions container */
+/* ===== MAIN CONTENT ===== */
 .predictions-container {
-  padding-top: 120px; /* Adjust header height */
-  padding-left: 1rem;
-  padding-right: 1rem;
+  padding: 140px 15px 30px 15px;
+}
+
+/* ===== CARD ===== */
+.card {
+  background: #ffffff;
+  padding: 15px;
+  border-radius: 14px;
+  box-shadow: 0 3px 12px rgba(0,0,0,0.08);
+  margin-bottom: 15px;
+}
+
+.card h3 {
+  font-size: 1rem;
+  margin-bottom: 5px;
+}
+
+.locked {
+  text-align: center;
+  padding: 30px 15px;
+}
+
+.locked i {
+  font-size: 2rem;
+  color: #f59e0b;
+  margin-bottom: 10px;
+}
+
+.locked button {
+  margin-top: 12px;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 25px;
+  background: #f59e0b;
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
 }
 </style>
 </head>
+
 <body>
 
 <header class="navbar">
@@ -102,76 +150,128 @@
     <button class="category-btn active" data-category="free">
       <i class="bi bi-circle-fill"></i> Free
     </button>
+
     <button class="category-btn" data-category="safe">
       <i class="bi bi-shield-fill"></i> Safe
     </button>
+
     <button class="category-btn" data-category="fixed">
       <i class="bi bi-star-fill"></i> Fixed
     </button>
+
     <button class="category-btn" data-category="members">
       <i class="bi bi-people-fill"></i> Members
     </button>
   </nav>
 
-  <div class="members-feed" id="members-feed">Loading members...</div>
+  <div class="members-feed" id="members-feed"></div>
 </header>
-
-<nav id="sidebar" class="sidebar">
-  <ul>
-    <li data-category="free">Free</li>
-    <li data-category="safe">Safe</li>
-    <li data-category="fixed">Fixed</li>
-  </ul>
-</nav>
 
 <main id="predictions" class="predictions-container">
   <p>Loading predictions...</p>
 </main>
 
 <script>
-const categoryButtons = document.querySelectorAll(".category-btn");
-const membersFeed = document.getElementById("members-feed");
-let membersData = [];
+// ===== USER TYPE SIMULATION =====
+// change to: free / safe_weekly / safe_monthly / fixed_weekly / fixed_monthly
+let currentUserPlan = "free";
 
-// ===== Category Button Click =====
+const categoryButtons = document.querySelectorAll(".category-btn");
+const predictions = document.getElementById("predictions");
+const membersFeed = document.getElementById("members-feed");
+
 categoryButtons.forEach(btn => {
   btn.addEventListener("click", () => {
     categoryButtons.forEach(b => b.classList.remove("active"));
     btn.classList.add("active");
-    const cat = btn.dataset.category;
 
-    if(cat === "members"){
+    const category = btn.dataset.category;
+
+    if(category === "members"){
       startMembersFeed();
+      predictions.innerHTML = "";
     } else {
       stopMembersFeed();
-    }
-
-    // Call your existing renderPredictions function if not members
-    if(typeof renderPredictions === "function" && cat !== "members"){
-      renderPredictions(cat);
+      loadCategory(category);
     }
   });
 });
 
-// ===== Live Members Feed Simulation =====
-let membersInterval;
+// ===== LOAD CATEGORY =====
+function loadCategory(category){
+
+  if(category === "free"){
+    predictions.innerHTML = `
+      <div class="card">
+        <h3>Manchester Utd vs Arsenal</h3>
+        <p>Prediction: Over 2.5</p>
+        <p>Odds: 1.85</p>
+      </div>
+    `;
+  }
+
+  if(category === "safe"){
+    if(currentUserPlan === "safe_weekly" || currentUserPlan === "safe_monthly"){
+      predictions.innerHTML = `
+        <div class="card">
+          <h3>Real Madrid vs Valencia</h3>
+          <p>Prediction: Home Win</p>
+          <p>Odds: 1.65</p>
+        </div>
+      `;
+    } else {
+      lockScreen("SAFE VIP Required");
+    }
+  }
+
+  if(category === "fixed"){
+    if(currentUserPlan === "fixed_weekly" || currentUserPlan === "fixed_monthly"){
+      predictions.innerHTML = `
+        <div class="card">
+          <h3>Confidential Match</h3>
+          <p>Prediction: 100% Fixed</p>
+          <p>Odds: 2.10</p>
+        </div>
+      `;
+    } else {
+      lockScreen("FIXED VIP Required");
+    }
+  }
+}
+
+// ===== LOCK SCREEN =====
+function lockScreen(title){
+  predictions.innerHTML = `
+    <div class="card locked">
+      <i class="bi bi-lock-fill"></i>
+      <h3>${title}</h3>
+      <p>You must subscribe to view this prediction.</p>
+      <button>Subscribe Now</button>
+    </div>
+  `;
+}
+
+// ===== MEMBERS FEED =====
+let interval;
 function startMembersFeed(){
-  membersData = [];
-  membersFeed.textContent = '';
-  membersInterval = setInterval(() => {
-    const randomEmail = `ngim${Math.floor(Math.random()*999)}@gmail.com`;
-    const now = new Date();
-    const timeStr = now.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit', second:'2-digit'});
-    membersData.push(`${randomEmail} joined ${timeStr}`);
-    if(membersData.length > 8) membersData.shift(); // Keep last 8
-    membersFeed.textContent = membersData.join(' | ');
-  }, 15000); // every 15 seconds
+  let data = [];
+  interval = setInterval(() => {
+    const email = "user" + Math.floor(Math.random()*999) + "@gmail.com";
+    const time = new Date().toLocaleTimeString();
+    data.push(email + " joined VIP at " + time);
+    if(data.length > 6) data.shift();
+    membersFeed.textContent = data.join("  |  ");
+  }, 10000);
 }
 
 function stopMembersFeed(){
-  clearInterval(membersInterval);
-  membersFeed.textContent = '';
+  clearInterval(interval);
+  membersFeed.textContent = "";
 }
+
+// Load default free on start
+loadCategory("free");
+
 </script>
 
 </body>
