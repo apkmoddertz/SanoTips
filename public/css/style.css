@@ -128,19 +128,20 @@ body {
   border-left: 4px solid #facc15;
   box-shadow: 0 3px 8px rgba(0,0,0,0.4);
 }
+/* Date label above first match card */
 .date-header {
   text-align: center;
   font-size: 14px;
   font-weight: 700;
   color: #fff;
-  margin: 1rem 0 0.5rem 0;
-  text-shadow: 0 1px 2px rgba(0,0,0,0.7);
-  padding: 0.5rem 1rem;
+  margin: 1rem auto 0.5rem auto;
+  padding: 0.4rem 1rem;
   border-radius: 12px;
   background: linear-gradient(135deg, #ff9a9e, #fad0c4, #a18cd1);
   box-shadow: 0 4px 12px rgba(0,0,0,0.4);
   display: inline-block;
   min-width: 120px;
+  white-space: nowrap;
 }
 .prediction-left {
   display: flex;
