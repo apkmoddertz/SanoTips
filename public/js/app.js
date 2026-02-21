@@ -1,4 +1,3 @@
-// js/app.js
 import { getMatches } from "./firebase.js";
 
 const sidebar = document.getElementById("sidebar");
@@ -12,46 +11,31 @@ menuToggle.addEventListener("click", () => {
   sidebar.classList.toggle("show");
 });
 
-// SVG icons for status
+// SVG status icons
 const statusIcons = {
-  pending: `<svg xmlns="http://www.w3.org/2000/svg" class="status-icon pending" viewBox="0 0 24 24" fill="none" stroke="#facc15" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="24" height="24">
-    <circle cx="12" cy="12" r="10"></circle>
-    <path d="M12 6v6l4 2"></path>
-  </svg>`,
-  win: `<svg xmlns="http://www.w3.org/2000/svg" class="status-icon win" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="24" height="24">
-    <path d="M20 6L9 17l-5-5"></path>
-  </svg>`,
-  lose: `<svg xmlns="http://www.w3.org/2000/svg" class="status-icon lose" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="24" height="24">
-    <line x1="18" y1="6" x2="6" y2="18"></line>
-    <line x1="6" y1="6" x2="18" y2="18"></line>
-  </svg>`
+  pending: `<svg xmlns="http://www.w3.org/2000/svg" class="status-icon pending" viewBox="0 0 24 24" fill="none" stroke="#facc15" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>`,
+  win: `<svg xmlns="http://www.w3.org/2000/svg" class="status-icon win" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>`,
+  lose: `<svg xmlns="http://www.w3.org/2000/svg" class="status-icon lose" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>`
 };
 
-// Get normalized status icon
+// Get status icon based on match status
 function getStatusIcon(status) {
-  if (!status) return statusIcons.pending;
-  const s = status.toString().trim().toLowerCase();
-  if (s === "win" || s === "won") return statusIcons.win;
-  if (s === "lose" || s === "lost") return statusIcons.lose;
-  return statusIcons.pending;
+  const s = (status || "pending").toLowerCase();
+  return statusIcons[s] || statusIcons.pending;
 }
 
-// Render predictions
+// Render matches
 async function renderPredictions(category) {
   currentCategory = category;
   predictionsContainer.innerHTML = "<p>Loading...</p>";
 
   try {
     const predictions = await getMatches();
-    const filtered = predictions.filter(p =>
-      (p.category || "").toLowerCase() === category.toLowerCase()
-    );
-
+    const filtered = predictions.filter(p => (p.category || "").toLowerCase() === category.toLowerCase());
     predictionsContainer.innerHTML = "";
 
     if (!filtered.length) {
-      predictionsContainer.innerHTML =
-        "<div class='empty-msg'>No predictions available.</div>";
+      predictionsContainer.innerHTML = "<div class='empty-msg'>No predictions available.</div>";
       return;
     }
 
@@ -65,24 +49,25 @@ async function renderPredictions(category) {
 
       card.innerHTML = `
         <div class="card-header">
-          <span class="league">${p.league || "League"}</span>
+          <span class="league">${p.league || "-"}</span>
           <span class="date">${formattedDate}</span>
         </div>
 
-        <!-- Teams Row -->
-        <div class="teams">
-          <div class="team home">${p.homeTeam || "Home"}</div>
-          <div class="vs">VS</div>
-          <div class="team away">${p.awayTeam || "Away"}</div>
+        <div class="teams-table">
+          <table>
+            <tr>
+              <td class="team home">${p.homeTeam || "Home"}</td>
+              <td class="vs">VS</td>
+              <td class="team away">${p.awayTeam || "Away"}</td>
+            </tr>
+          </table>
         </div>
 
-        <!-- Prediction Row -->
         <div class="prediction-box">
           <div class="prediction-left">
             <small class="prediction-label">Prediction</small>
             <div class="prediction-text">${p.prediction || "-"}</div>
           </div>
-
           <div class="prediction-right">
             ${statusIcon}
             <div class="odds">${oddsValue.toFixed(2)}</div>
@@ -95,8 +80,7 @@ async function renderPredictions(category) {
 
   } catch (error) {
     console.error("Error loading predictions:", error);
-    predictionsContainer.innerHTML =
-      "<div class='error-msg'>Error loading predictions.</div>";
+    predictionsContainer.innerHTML = "<div class='error-msg'>Error loading predictions.</div>";
   }
 }
 
