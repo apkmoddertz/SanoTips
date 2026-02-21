@@ -1,6 +1,7 @@
 // js/app.js
 import { getMatches } from "./firebase.js";
 
+// Sidebar and menu toggle
 const sidebar = document.getElementById("sidebar");
 const menuToggle = document.getElementById("menu-toggle");
 const predictionsContainer = document.getElementById("predictions");
@@ -12,113 +13,96 @@ menuToggle.addEventListener("click", () => {
 // Current category
 let currentCategory = "free";
 
-// Helper: format date
-function formatDate(dateString) {
-  const d = new Date(dateString);
-  return d.toLocaleString("en-US", {
-    weekday: "short",
-    hour: "numeric",
-    minute: "numeric",
-    month: "short",
-    day: "numeric"
-  });
+// Simulate VIP access (replace with real auth if you add login later)
+const userProfile = {
+  subscription: "free", // free / safe / fixed
+  status: "active",
+  expires: "2026-03-01"
+};
+
+// Function to check if a prediction is locked
+function isLocked(pred) {
+  if (pred.category.toLowerCase() === "free") return false;
+  if (!userProfile || userProfile.status !== "active") return true;
+  if (userProfile.expires && new Date(userProfile.expires) < new Date()) return true;
+  if (pred.category.toLowerCase() === "safe" && !["safe","fixed"].includes(userProfile.subscription)) return true;
+  if (pred.category.toLowerCase() === "fixed" && userProfile.subscription !== "fixed") return true;
+  return false;
 }
 
-// Create prediction card
-function createPredictionCard(pred, isLocked = false) {
-  const card = document.createElement("div");
-  card.className = "prediction-card";
-
-  if (isLocked) {
-    card.innerHTML = `
-      <div class="locked-overlay">
-        <div class="lock-icon">🔒</div>
-        <h3>VIP Content Locked</h3>
-        <p>Upgrade to ${pred.category} Plan to see this high-confidence prediction.</p>
-        <button class="unlock-btn">Unlock Now</button>
-      </div>
-      <div class="blurred-content">
-        <div class="header">
-          <span>${pred.league}</span>
-          <span>${formatDate(pred.date)}</span>
-        </div>
-        <div class="teams">
-          <span>${pred.homeTeam || pred.home}</span>
-          <span>VS</span>
-          <span>${pred.awayTeam || pred.away}</span>
-        </div>
-        <div class="prediction-box">
-          <div class="h-12"></div>
-        </div>
-      </div>
-    `;
-    // Unlock button click
-    card.querySelector(".unlock-btn").addEventListener("click", () => {
-      alert("Redirect to premium plan!");
-    });
-    return card;
-  }
-
-  // Normal card
-  card.innerHTML = `
-    <div class="card-header">
-      <span class="league">${pred.league}</span>
-      <span class="time">${formatDate(pred.date)}</span>
-    </div>
-    <div class="teams">
-      <span class="home">${pred.homeTeam || pred.home}</span>
-      <span class="vs">VS</span>
-      <span class="away">${pred.awayTeam || pred.away}</span>
-    </div>
-    <div class="prediction-box">
-      <div class="prediction-info">
-        <div>
-          <div class="label">Prediction</div>
-          <div class="value">${pred.prediction}</div>
-        </div>
-        <div>
-          <div class="label">Odds</div>
-          <div class="value">${pred.odds ? pred.odds.toFixed(2) : "-"}</div>
-        </div>
-        <div class="status">
-          ${pred.status === "Won" ? "✅" : pred.status === "Lost" ? "❌" : "⏳"}
-        </div>
-      </div>
-      ${pred.analysis ? `<div class="analysis">"${pred.analysis}"</div>` : ""}
-    </div>
-  `;
-
-  return card;
-}
-
-// Fetch and render predictions
+// Render predictions
 async function renderPredictions(category) {
   currentCategory = category;
   predictionsContainer.innerHTML = "<p>Loading...</p>";
 
-  const predictions = await getMatches(); // Fetch from Firestore
-  const filtered = predictions.filter(
-    p => (p.category || "").toLowerCase() === category.toLowerCase()
-  );
+  try {
+    const predictions = await getMatches();
+    const filtered = predictions.filter(p => p.category.toLowerCase() === category.toLowerCase());
 
-  predictionsContainer.innerHTML = "";
-  if (!filtered.length) {
-    predictionsContainer.innerHTML =
-      "<div class='empty-msg'>No predictions available.</div>";
-    return;
-  }
-
-  filtered.forEach(pred => {
-    // Lock content if safe/fixed and user has no access
-    let isLocked = false;
-    if ((category === "safe" || category === "fixed") && pred.status === "pending") {
-      // You can add real user check here
-      isLocked = false; // set true if user is not premium
+    predictionsContainer.innerHTML = "";
+    if (!filtered.length) {
+      predictionsContainer.innerHTML = "<div class='empty-msg'>No predictions available.</div>";
+      return;
     }
 
-    const card = createPredictionCard(pred, isLocked);
-    predictionsContainer.appendChild(card);
-  });
+    filtered.forEach(pred => {
+      const card = document.createElement("div");
+      card.className = "prediction-card";
+
+      if (isLocked(pred)) {
+        // Locked card
+        card.innerHTML = `
+          <div class="locked-overlay">
+            <div class="lock-icon">🔒</div>
+            <h3>VIP Content Locked</h3>
+            <p>Upgrade to ${pred.category} plan to see this prediction.</p>
+            <button onclick="alert('Upgrade to VIP!')">Unlock Now</button>
+          </div>
+          <div class="blurred-card">
+            <div class="card-header">
+              <span>${pred.league}</span>
+              <span>${new Date(pred.date).toLocaleString()}</span>
+            </div>
+            <div class="teams">
+              <span>${pred.homeTeam}</span>
+              <span>VS</span>
+              <span>${pred.awayTeam}</span>
+            </div>
+            <div class="prediction-box">
+              <span>Prediction: ${pred.prediction}</span>
+              <span class="status">${pred.status}</span>
+              <span>Odds: ${pred.odds.toFixed(2)}</span>
+            </div>
+          </div>
+        `;
+      } else {
+        // Normal card
+        card.innerHTML = `
+          <div class="card-header">
+            <span>${pred.league}</span>
+            <span>${new Date(pred.date).toLocaleString()}</span>
+          </div>
+          <div class="teams">
+            <span>${pred.homeTeam}</span>
+            <span>VS</span>
+            <span>${pred.awayTeam}</span>
+          </div>
+          <div class="prediction-box">
+            <span>Prediction: ${pred.prediction}</span>
+            <span class="status">${pred.status}</span>
+            <span>Odds: ${pred.odds.toFixed(2)}</span>
+          </div>
+          ${pred.analysis ? `<div class="analysis">${pred.analysis}</div>` : ""}
+        `;
+      }
+
+      predictionsContainer.appendChild(card);
+    });
+
+  } catch (err) {
+    console.error("Error loading predictions:", err);
+    predictionsContainer.innerHTML = "<div class='empty-msg'>Failed to load predictions.</div>";
+  }
 }
 
 // Sidebar click
