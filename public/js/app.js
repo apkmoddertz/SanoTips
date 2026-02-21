@@ -11,7 +11,7 @@ menuToggle.addEventListener("click", () => {
   sidebar.classList.toggle("show");
 });
 
-// Status SVGs with animation
+// Status SVGs with proper stroke animation
 const statusIcons = {
   pending: `
     <svg class="status-icon" viewBox="0 0 24 24" fill="none" stroke="#facc15" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -21,8 +21,8 @@ const statusIcons = {
   `,
   win: `
     <svg class="status-icon" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-      <path d="M20 6L9 17l-5-5">
-        <animate attributeName="stroke-dashoffset" from="20" to="0" dur="0.5s" fill="freeze"/>
+      <path d="M20 6L9 17l-5-5" stroke-dasharray="30" stroke-dashoffset="30">
+        <animate attributeName="stroke-dashoffset" from="30" to="0" dur="0.5s" fill="freeze"/>
       </path>
     </svg>
   `,
@@ -99,6 +99,7 @@ async function renderPredictions(category) {
           </div>
         </div>
       `;
+
       predictionsContainer.appendChild(card);
     });
 
