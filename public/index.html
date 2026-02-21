@@ -1,43 +1,15 @@
+<!-- Path: public/index.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SanoTips - Football Predictions</title>
-<link rel="stylesheet" href="css/style.css">
-<script type="module" src="js/app.js" defer></script>
+  <meta charset="UTF-8">
+  <title>SanoTips</title>
+  <link rel="stylesheet" href="./css/style.css">
 </head>
 <body>
+  <h1>SanoTips Predictions</h1>
+  <div id="predictions"></div>
 
-<header class="navbar">
-  <h1>SanoTips</h1>
-  <button id="menu-toggle">☰</button>
-</header>
-
-<nav id="sidebar" class="sidebar hidden">
-  <ul>
-    <li data-category="free">Free</li>
-    <li data-category="safe">Safe</li>
-    <li data-category="fixed">Fixed</li>
-  </ul>
-</nav>
-
-<main id="predictions" class="predictions-container">
-  <!-- Predictions loaded here -->
-</main>
-
-<div id="premium-modal" class="modal hidden">
-  <div class="modal-content">
-    <p>This is premium content. Upgrade to view.</p>
-    <button onclick="document.getElementById('premium-modal').classList.add('hidden')">Close</button>
-  </div>
-</div>
-
-<footer class="bottom-menu">
-  <button data-category="free">Free</button>
-  <button data-category="safe">Safe</button>
-  <button data-category="fixed">Fixed</button>
-</footer>
-
+  <script type="module" src="./js/app.js"></script>
 </body>
 </html>
