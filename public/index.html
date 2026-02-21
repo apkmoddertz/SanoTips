@@ -5,12 +5,11 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Sano Betting Tips</title>
 
-<link rel="stylesheet" href="css/style.css">
-<script type="module" src="js/app.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
 
 <style>
 
-/* ===== PREMIUM MOBILE BACKGROUND ===== */
+/* ===== GLOBAL ===== */
 body {
   margin: 0;
   font-family: 'Segoe UI', sans-serif;
@@ -19,126 +18,58 @@ body {
 }
 
 /* ===== HEADER ===== */
-.navbar {
+.header {
   position: fixed;
   top: 0;
   width: 100%;
-  backdrop-filter: blur(12px);
-  background: rgba(15, 23, 42, 0.85);
-  box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+  background: rgba(15, 23, 42, 0.95);
+  backdrop-filter: blur(10px);
+  padding: 18px 10px 12px;
+  text-align: center;
   z-index: 1000;
-  padding: 15px;
-  border-bottom: 1px solid rgba(255,255,255,0.05);
 }
 
-/* Title ON TOP */
-.navbar h1 {
-  text-align: center;
-  font-size: 20px;
-  margin: 0;
+.header h1 {
+  margin: 0 0 12px;
+  font-size: 22px;
   font-weight: 700;
-  background: linear-gradient(90deg, #facc15, #f59e0b);
+  background: linear-gradient(90deg,#facc15,#f59e0b);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  letter-spacing: 1px;
 }
 
-/* Menu Toggle */
-#menu-toggle {
-  position: absolute;
-  left: 15px;
-  top: 18px;
-  font-size: 22px;
-  background: none;
-  border: none;
-  color: #facc15;
-  cursor: pointer;
-}
-
-/* ===== CATEGORY NAV ===== */
+/* ===== CATEGORY MENU ===== */
 .category-nav {
   display: flex;
   justify-content: space-around;
-  margin-top: 15px;
 }
 
 .category-btn {
   background: none;
   border: none;
-  padding: 10px 12px;
-  cursor: pointer;
-  font-weight: 600;
-  font-size: 14px;
   color: #94a3b8;
-  position: relative;
+  font-size: 13px;
+  font-weight: 600;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
+  padding: 6px;
   transition: 0.3s;
+}
+
+.category-btn i {
+  font-size: 18px;
 }
 
 .category-btn.active {
   color: #facc15;
 }
 
-.category-btn.active::after {
-  content: "";
-  position: absolute;
-  bottom: 0;
-  left: 15%;
-  width: 70%;
-  height: 3px;
-  background: linear-gradient(90deg, #facc15, #f59e0b);
-  border-radius: 10px;
-}
-
-.category-btn:hover {
-  color: #facc15;
-}
-
-/* ===== MEMBERS FEED ===== */
-.members-feed {
-  font-size: 12px;
-  text-align: center;
-  color: #cbd5e1;
-  margin-top: 8px;
-}
-
-/* ===== SIDEBAR ===== */
-.sidebar {
-  position: fixed;
-  top: 0;
-  left: -250px;
-  width: 220px;
-  height: 100%;
-  background: #0f172a;
-  box-shadow: 2px 0 20px rgba(0,0,0,0.5);
-  transition: 0.3s;
-  padding-top: 80px;
-  z-index: 999;
-}
-
-.sidebar.show {
-  left: 0;
-}
-
-.sidebar ul {
-  list-style: none;
-  padding: 0;
-}
-
-.sidebar li {
-  padding: 15px;
-  cursor: pointer;
-  border-bottom: 1px solid rgba(255,255,255,0.05);
-  color: #cbd5e1;
-}
-
-.sidebar li:hover {
-  background: rgba(255,255,255,0.05);
-  color: #facc15;
-}
-
-/* ===== PREDICTIONS CONTAINER ===== */
+/* ===== CONTENT ===== */
 #predictions {
-  padding: 160px 15px 30px;
+  padding: 150px 15px 40px;
 }
 
 /* ===== DATE HEADER ===== */
@@ -149,44 +80,42 @@ body {
   font-size: 14px;
 }
 
-/* ===== MATCH CARD ===== */
+/* ===== CARD ===== */
 .prediction-card {
   background: rgba(255,255,255,0.05);
   backdrop-filter: blur(10px);
   padding: 15px;
   margin-top: 12px;
   border-radius: 14px;
-  border: 1px solid rgba(255,255,255,0.05);
-  box-shadow: 0 6px 20px rgba(0,0,0,0.3);
-  transition: 0.3s;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.4);
+  animation: fadeIn 0.4s ease;
 }
 
-.prediction-card:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+@keyframes fadeIn {
+  from {opacity:0; transform: translateY(10px);}
+  to {opacity:1; transform: translateY(0);}
 }
 
-.card-header {
+.card-top {
   display: flex;
   justify-content: space-between;
   font-size: 12px;
   color: #94a3b8;
-  margin-bottom: 8px;
+  margin-bottom: 10px;
 }
 
-.teams-table table {
-  width: 100%;
-  text-align: center;
+.teams {
+  display: flex;
+  justify-content: space-between;
   font-weight: 600;
   margin-bottom: 10px;
 }
 
 .vs {
   color: #facc15;
-  font-weight: bold;
 }
 
-.prediction-box {
+.card-bottom {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -195,16 +124,28 @@ body {
 .prediction-text {
   font-size: 15px;
   font-weight: 600;
-  color: #fff;
+}
+
+.odds-box {
+  display: flex;
+  align-items: center;
+  gap: 6px;
 }
 
 .odds {
-  font-size: 16px;
   font-weight: 700;
   color: #10b981;
 }
 
-/* ===== LOADING SPINNER ===== */
+.status {
+  font-size: 10px;
+}
+
+.status.win { color: #10b981; }
+.status.lose { color: #ef4444; }
+.status.pending { color: #facc15; }
+
+/* ===== LOADING ===== */
 .loading-spinner {
   width: 40px;
   height: 40px;
@@ -227,37 +168,173 @@ body {
 
 </style>
 </head>
-
 <body>
 
-<header class="navbar">
-
-  <button id="menu-toggle">☰</button>
-
+<header class="header">
   <h1>Sano Betting Tips</h1>
 
   <div class="category-nav">
-    <button class="category-btn active" data-category="free">Free</button>
-    <button class="category-btn" data-category="safe">Safe</button>
-    <button class="category-btn" data-category="fixed">Fixed</button>
-    <button class="category-btn" data-category="members">Members</button>
+    <button class="category-btn active" data-category="free">
+      <i class="bi bi-circle-fill"></i>
+      Free
+    </button>
+
+    <button class="category-btn" data-category="safe">
+      <i class="bi bi-shield-fill"></i>
+      Safe
+    </button>
+
+    <button class="category-btn" data-category="fixed">
+      <i class="bi bi-star-fill"></i>
+      Fixed
+    </button>
   </div>
-
-  <div class="members-feed" id="members-feed"></div>
-
 </header>
-
-<nav id="sidebar" class="sidebar">
-  <ul>
-    <li data-category="free">Free</li>
-    <li data-category="safe">Safe</li>
-    <li data-category="fixed">Fixed</li>
-  </ul>
-</nav>
 
 <main id="predictions">
   <div class="loading-spinner"></div>
 </main>
+
+<!-- ===== FIREBASE + APP SCRIPT ===== -->
+<script type="module">
+
+// 🔥 1️⃣ IMPORT FIREBASE
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+// 🔥 2️⃣ YOUR FIREBASE CONFIG (PUT YOUR REAL CONFIG HERE)
+const firebaseConfig = {
+  apiKey: "YOUR_API_KEY",
+  authDomain: "YOUR_DOMAIN",
+  projectId: "YOUR_PROJECT_ID",
+  storageBucket: "YOUR_BUCKET",
+  messagingSenderId: "YOUR_SENDER_ID",
+  appId: "YOUR_APP_ID"
+};
+
+// 🔥 3️⃣ INITIALIZE
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+// 🔥 4️⃣ FETCH MATCHES
+async function getMatches() {
+  const querySnapshot = await getDocs(collection(db, "matches"));
+  const matches = [];
+  querySnapshot.forEach(doc => {
+    matches.push(doc.data());
+  });
+  return matches;
+}
+
+// --------------------- UI LOGIC ---------------------
+const predictionsContainer = document.getElementById("predictions");
+const categoryButtons = document.querySelectorAll(".category-btn");
+let currentCategory = "free";
+
+const statusIcons = {
+  pending: `<span class="status pending">●</span>`,
+  win: `<span class="status win">●</span>`,
+  lose: `<span class="status lose">●</span>`
+};
+
+function getStatusIcon(status){
+    if(!status) return statusIcons.pending;
+    const s = status.toLowerCase();
+    if(["win","won"].includes(s)) return statusIcons.win;
+    if(["lose","lost"].includes(s)) return statusIcons.lose;
+    return statusIcons.pending;
+}
+
+async function renderPredictions(category){
+  currentCategory = category;
+  predictionsContainer.innerHTML = `<div class="loading-spinner"></div>`;
+
+  try{
+    const predictions = await getMatches();
+
+    const filtered = predictions.filter(
+      p => (p.category || "").toLowerCase() === category.toLowerCase()
+    );
+
+    filtered.sort((a,b)=> new Date(b.date) - new Date(a.date));
+
+    predictionsContainer.innerHTML = "";
+
+    if(!filtered.length){
+      predictionsContainer.innerHTML =
+        "<div class='empty-msg'>No matches available.</div>";
+      return;
+    }
+
+    let lastDate = null;
+
+    filtered.forEach(p => {
+      const matchDate = new Date(p.date);
+      const dateString =
+        matchDate.getDate().toString().padStart(2,'0') + " " +
+        matchDate.toLocaleString('default', {month:'short'}) + " " +
+        matchDate.getFullYear();
+
+      if(dateString !== lastDate){
+        const dateHeader = document.createElement("div");
+        dateHeader.className = "date-header";
+        dateHeader.textContent = dateString;
+        predictionsContainer.appendChild(dateHeader);
+        lastDate = dateString;
+      }
+
+      const oddsValue = Number(p.odds || 0);
+
+      const card = document.createElement("div");
+      card.className = "prediction-card";
+      card.innerHTML = `
+        <div class="card-top">
+          <span>${p.league || "-"}</span>
+          <span>${matchDate.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>
+        </div>
+
+        <div class="teams">
+          <span>${p.homeTeam || "Home"}</span>
+          <span class="vs">VS</span>
+          <span>${p.awayTeam || "Away"}</span>
+        </div>
+
+        <div class="card-bottom">
+          <div>
+            <small>Prediction</small>
+            <div class="prediction-text">${p.prediction || "-"}</div>
+          </div>
+
+          <div class="odds-box">
+            ${getStatusIcon(p.status)}
+            <span class="odds">${oddsValue.toFixed(2)}</span>
+          </div>
+        </div>
+      `;
+
+      predictionsContainer.appendChild(card);
+    });
+
+  }catch(err){
+    console.error(err);
+    predictionsContainer.innerHTML =
+      "<div class='error-msg'>Error loading matches.</div>";
+  }
+}
+
+// CATEGORY CLICK
+categoryButtons.forEach(btn => {
+  btn.addEventListener("click", () => {
+    categoryButtons.forEach(b => b.classList.remove("active"));
+    btn.classList.add("active");
+    renderPredictions(btn.dataset.category);
+  });
+});
+
+// INITIAL LOAD
+renderPredictions(currentCategory);
+
+</script>
 
 </body>
 </html>
