@@ -44,6 +44,7 @@ header h1{margin:0 0 12px;font-size:22px;background:linear-gradient(90deg,#facc1
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getFirestore, collection, getDocs, query, where } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
+// 🔥 Firebase config
 const firebaseConfig = {
   apiKey: "AIzaSyC0BSUvubGtHxeHZ_pnh776bzoGKGxXNbU",
   authDomain: "voltflow-35a0b.firebaseapp.com",
@@ -52,61 +53,72 @@ const firebaseConfig = {
   messagingSenderId: "241701625823",
   appId: "1:241701625823:web:d4d7d9362e0207e5a32e6a"
 };
-
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
 const container = document.getElementById("predictions");
 const buttons = document.querySelectorAll(".menu button");
+let currentCategory = "free";
+let currentUserPlan = "free";
 
-let currentCategory="free";
-let currentUserPlan="free";
-
-// ✅ Check if user logged in
+// ✅ Redirect to login if not logged in
 const localUser = JSON.parse(localStorage.getItem("user"));
 if(!localUser){ window.location.href="login.html"; }
 
-// ✅ Get subscription from Firestore
+// ✅ Get user subscription
 async function getUserSubscription() {
   const q = query(collection(db,"users"), where("email","==",localUser.email));
   const snap = await getDocs(q);
   if(snap.empty) return "free";
-  let plan="free";
-  snap.forEach(doc=>plan=doc.data().subscription||"free");
+  let plan = "free";
+  snap.forEach(doc=>plan = (doc.data().subscription || "free").toLowerCase());
   return plan;
 }
 
-// 🔥 Render matches
+// 🔥 Fetch matches
 async function getMatches(){ 
   const snap = await getDocs(collection(db,"matches"));
   const data=[]; snap.forEach(d=>data.push(d.data())); return data;
 }
 
-// 🔒 Should blur
+// 🔒 Should blur card
 function shouldBlur(matchCategory){
   const levels = { free:1, safe:2, fixed:3 };
   const planLevels = { free:1, safe:2, fixed:3 };
-  const userLevel = planLevels[currentUserPlan];
-  const matchLevel = matchCategory==="safe" && currentUserPlan==="fixed" ? 0 : levels[matchCategory]; // fixed skips safe
+  const userLevel = planLevels[currentUserPlan] || 1;
+  let matchLevel = levels[matchCategory] || 1;
+
+  // Fixed users cannot see safe
+  if(currentUserPlan==="fixed" && matchCategory==="safe") matchLevel = 99;
+
   return userLevel < matchLevel;
 }
 
 // 🔥 Render function
 async function render(category){
-  currentCategory=category;
+  currentCategory = category;
   container.innerHTML='<div class="loading"></div>';
   const matches = await getMatches();
-  const filtered = matches.filter(m => (m.category||"").toLowerCase()===category.toLowerCase());
+
+  const filtered = matches.filter(m => (m.category||"").toLowerCase() === category.toLowerCase());
   filtered.sort((a,b)=> new Date(b.date)-new Date(a.date));
   container.innerHTML="";
   if(!filtered.length){ container.innerHTML='<div class="empty">No matches available</div>'; return; }
+
   let lastDate=null;
   filtered.forEach(m=>{
-    const matchDate=new Date(m.date);
+    const matchDate = new Date(m.date);
     const dateString = matchDate.getDate().toString().padStart(2,'0')+" "+
                        matchDate.toLocaleString('default',{month:'short'})+" "+
                        matchDate.getFullYear();
-    if(dateString!==lastDate){ const dateDiv=document.createElement("div"); dateDiv.className="date-header"; dateDiv.textContent=dateString; container.appendChild(dateDiv); lastDate=dateString; }
+    if(dateString!==lastDate){ 
+      const dateDiv = document.createElement("div"); 
+      dateDiv.className="date-header"; 
+      dateDiv.textContent=dateString; 
+      container.appendChild(dateDiv); 
+      lastDate=dateString; 
+    }
+
     const hideVIP = shouldBlur(m.category);
     const card = document.createElement("div");
     card.className="card"+(hideVIP?" vip":"");
@@ -143,7 +155,7 @@ buttons.forEach(btn=>{
     render(btn.dataset.category);
   });
 });
-
 </script>
+
 </body>
 </html>
