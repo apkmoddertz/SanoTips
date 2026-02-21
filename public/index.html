@@ -10,94 +10,108 @@
 
 <style>
 
-/* ===== Basic Reset ===== */
+/* ===== PREMIUM MOBILE BACKGROUND ===== */
 body {
   margin: 0;
-  font-family: Arial, sans-serif;
-  background: #f4f4f4;
+  font-family: 'Segoe UI', sans-serif;
+  background: linear-gradient(135deg, #0f172a, #1e293b);
+  color: #fff;
 }
 
-/* ===== Header ===== */
+/* ===== HEADER ===== */
 .navbar {
   position: fixed;
   top: 0;
   width: 100%;
-  background: #fff;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  backdrop-filter: blur(12px);
+  background: rgba(15, 23, 42, 0.85);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.4);
   z-index: 1000;
-  padding: 10px 15px;
+  padding: 15px;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
 }
 
-.navbar-top {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
+/* Title ON TOP */
 .navbar h1 {
-  font-size: 18px;
+  text-align: center;
+  font-size: 20px;
   margin: 0;
-  color: #f59e0b;
+  font-weight: 700;
+  background: linear-gradient(90deg, #facc15, #f59e0b);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  letter-spacing: 1px;
 }
 
+/* Menu Toggle */
 #menu-toggle {
-  font-size: 20px;
+  position: absolute;
+  left: 15px;
+  top: 18px;
+  font-size: 22px;
   background: none;
   border: none;
+  color: #facc15;
   cursor: pointer;
 }
 
-/* ===== Category Buttons ===== */
+/* ===== CATEGORY NAV ===== */
 .category-nav {
   display: flex;
   justify-content: space-around;
-  margin-top: 8px;
+  margin-top: 15px;
 }
 
 .category-btn {
   background: none;
   border: none;
-  padding: 8px;
+  padding: 10px 12px;
   cursor: pointer;
-  font-weight: 500;
-  color: #555;
+  font-weight: 600;
+  font-size: 14px;
+  color: #94a3b8;
   position: relative;
+  transition: 0.3s;
 }
 
 .category-btn.active {
-  color: #f59e0b;
+  color: #facc15;
 }
 
 .category-btn.active::after {
   content: "";
   position: absolute;
   bottom: 0;
-  left: 10%;
-  width: 80%;
+  left: 15%;
+  width: 70%;
   height: 3px;
-  background: #f59e0b;
-  border-radius: 5px;
+  background: linear-gradient(90deg, #facc15, #f59e0b);
+  border-radius: 10px;
 }
 
-/* ===== Members Feed ===== */
+.category-btn:hover {
+  color: #facc15;
+}
+
+/* ===== MEMBERS FEED ===== */
 .members-feed {
   font-size: 12px;
   text-align: center;
-  color: #777;
-  padding: 5px 0;
+  color: #cbd5e1;
+  margin-top: 8px;
 }
 
-/* ===== Sidebar ===== */
+/* ===== SIDEBAR ===== */
 .sidebar {
   position: fixed;
   top: 0;
   left: -250px;
-  width: 200px;
+  width: 220px;
   height: 100%;
-  background: #fff;
-  box-shadow: 2px 0 6px rgba(0,0,0,0.1);
+  background: #0f172a;
+  box-shadow: 2px 0 20px rgba(0,0,0,0.5);
   transition: 0.3s;
-  padding-top: 60px;
+  padding-top: 80px;
   z-index: 999;
 }
 
@@ -111,54 +125,104 @@ body {
 }
 
 .sidebar li {
-  padding: 12px;
+  padding: 15px;
   cursor: pointer;
-  border-bottom: 1px solid #eee;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+  color: #cbd5e1;
 }
 
 .sidebar li:hover {
-  background: #f4f4f4;
+  background: rgba(255,255,255,0.05);
+  color: #facc15;
 }
 
-/* ===== Predictions Container ===== */
+/* ===== PREDICTIONS CONTAINER ===== */
 #predictions {
-  padding: 130px 15px 20px;
+  padding: 160px 15px 30px;
 }
 
-/* ===== Simple Loading Spinner ===== */
+/* ===== DATE HEADER ===== */
+.date-header {
+  margin-top: 25px;
+  font-weight: 700;
+  color: #facc15;
+  font-size: 14px;
+}
+
+/* ===== MATCH CARD ===== */
+.prediction-card {
+  background: rgba(255,255,255,0.05);
+  backdrop-filter: blur(10px);
+  padding: 15px;
+  margin-top: 12px;
+  border-radius: 14px;
+  border: 1px solid rgba(255,255,255,0.05);
+  box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+  transition: 0.3s;
+}
+
+.prediction-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  color: #94a3b8;
+  margin-bottom: 8px;
+}
+
+.teams-table table {
+  width: 100%;
+  text-align: center;
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+
+.vs {
+  color: #facc15;
+  font-weight: bold;
+}
+
+.prediction-box {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.prediction-text {
+  font-size: 15px;
+  font-weight: 600;
+  color: #fff;
+}
+
+.odds {
+  font-size: 16px;
+  font-weight: 700;
+  color: #10b981;
+}
+
+/* ===== LOADING SPINNER ===== */
 .loading-spinner {
-  width: 30px;
-  height: 30px;
-  border: 4px solid #eee;
-  border-top: 4px solid #f59e0b;
+  width: 40px;
+  height: 40px;
+  border: 4px solid rgba(255,255,255,0.1);
+  border-top: 4px solid #facc15;
   border-radius: 50%;
   animation: spin 1s linear infinite;
-  margin: 40px auto;
+  margin: 60px auto;
 }
 
 @keyframes spin {
   100% { transform: rotate(360deg); }
 }
 
-/* ===== Messages ===== */
 .empty-msg, .error-msg {
   text-align: center;
-  padding: 20px;
-  color: #888;
-}
-
-.date-header {
-  margin-top: 20px;
-  font-weight: bold;
-  color: #333;
-}
-
-.prediction-card {
-  background: white;
-  padding: 12px;
-  margin-top: 10px;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  padding: 30px;
+  color: #94a3b8;
 }
 
 </style>
@@ -168,10 +232,9 @@ body {
 
 <header class="navbar">
 
-  <div class="navbar-top">
-    <h1>Sano Betting Tips</h1>
-    <button id="menu-toggle">☰</button>
-  </div>
+  <button id="menu-toggle">☰</button>
+
+  <h1>Sano Betting Tips</h1>
 
   <div class="category-nav">
     <button class="category-btn active" data-category="free">Free</button>
@@ -180,12 +243,10 @@ body {
     <button class="category-btn" data-category="members">Members</button>
   </div>
 
-  <!-- IMPORTANT: required for app.js -->
   <div class="members-feed" id="members-feed"></div>
 
 </header>
 
-<!-- IMPORTANT: required for app.js -->
 <nav id="sidebar" class="sidebar">
   <ul>
     <li data-category="free">Free</li>
@@ -194,7 +255,6 @@ body {
   </ul>
 </nav>
 
-<!-- IMPORTANT: required for app.js -->
 <main id="predictions">
   <div class="loading-spinner"></div>
 </main>
