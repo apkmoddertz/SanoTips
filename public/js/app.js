@@ -32,7 +32,7 @@ function getStatusIcon(status) {
 // Render matches grouped by date
 async function renderPredictions(category) {
   currentCategory = category;
-  predictionsContainer.innerHTML = "<p>Loading...</p>";
+  predictionsContainer.innerHTML = `<div class="loading-spinner"></div>`;
 
   try {
     const predictions = await getMatches();
