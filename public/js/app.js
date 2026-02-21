@@ -18,10 +18,19 @@ const statusIcons = {
   lose: `<i class="bi bi-x-circle-fill text-danger"></i>`
 };
 
-// Get icon based on match status
+// Normalize and map match status to icon
 function getStatusIcon(status) {
-  const s = (status || "pending").toLowerCase();
-  return statusIcons[s] || statusIcons.pending;
+  if (!status) return statusIcons.pending;
+
+  const s = status.trim().toLowerCase(); // remove spaces + lowercase
+
+  const winValues = ["win", "won", "winning"];
+  const loseValues = ["lose", "lost", "losing"];
+
+  if (winValues.includes(s)) return statusIcons.win;
+  if (loseValues.includes(s)) return statusIcons.lose;
+
+  return statusIcons.pending;
 }
 
 // Render matches
@@ -74,6 +83,7 @@ async function renderPredictions(category) {
           </div>
         </div>
       `;
+
       predictionsContainer.appendChild(card);
     });
 
