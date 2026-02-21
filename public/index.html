@@ -3,38 +3,163 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SanoTips - Football Predictions</title>
+<title>Sano Tips</title>
 
-<link rel="stylesheet" href="css/style.css">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
 
-<!-- Firebase (MODULAR VERSION) -->
-<script type="module" src="js/app.js"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Inter',sans-serif;}
+body{background:#141517;color:#fff;padding:20px;}
 
+h1{margin-bottom:20px}
+
+.card{
+  background:#1a1b1e;
+  border-radius:16px;
+  padding:20px;
+  margin-bottom:20px;
+  border:1px solid rgba(255,255,255,0.05);
+  position:relative;
+  overflow:hidden;
+  transition:.3s;
+}
+
+.card:hover{
+  border:1px solid rgba(16,185,129,.4);
+}
+
+.league{
+  font-size:12px;
+  color:#888;
+  text-transform:uppercase;
+  font-weight:700;
+  margin-bottom:10px;
+}
+
+.match{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:15px;
+}
+
+.match h3{font-size:18px;}
+.vs{color:#555;font-weight:800;}
+
+.prediction-box{
+  background:#25262b;
+  padding:15px;
+  border-radius:12px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  border-left:5px solid #facc15;
+}
+
+.prediction-title{
+  font-size:12px;
+  color:#888;
+  margin-bottom:5px;
+  text-transform:uppercase;
+}
+
+.prediction-value{
+  color:#10b981;
+  font-weight:700;
+  font-size:18px;
+}
+
+.odds{font-size:18px;font-weight:700;}
+
+.locked{
+  position:absolute;
+  inset:0;
+  background:rgba(0,0,0,.85);
+  backdrop-filter:blur(8px);
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+  text-align:center;
+  padding:20px;
+}
+
+.unlock-btn{
+  background:#10b981;
+  color:#000;
+  border:none;
+  padding:12px 25px;
+  border-radius:12px;
+  font-weight:700;
+  cursor:pointer;
+}
+
+.modal-bg{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.7);
+  display:none;
+  justify-content:center;
+  align-items:center;
+}
+
+.modal{
+  background:#1a1b1e;
+  width:95%;
+  max-width:400px;
+  border-radius:20px;
+  padding:25px;
+  border:1px solid rgba(255,255,255,.1);
+}
+
+.plan{
+  padding:15px;
+  border-radius:12px;
+  border:1px solid rgba(255,255,255,.1);
+  margin-bottom:15px;
+  cursor:pointer;
+}
+
+.plan.active{
+  background:rgba(16,185,129,.2);
+  border:1px solid #10b981;
+}
+
+.pay-btn{
+  width:100%;
+  padding:15px;
+  background:#10b981;
+  border:none;
+  border-radius:12px;
+  font-weight:700;
+  font-size:16px;
+  cursor:pointer;
+}
+</style>
 </head>
 <body>
 
-<header class="navbar">
-  <h1>SanoTips</h1>
-  <button id="menu-toggle">☰</button>
-</header>
+<h1>🔥 Sano Tips</h1>
 
-<nav id="sidebar" class="sidebar">
-  <ul>
-    <li data-category="free">Free</li>
-    <li data-category="safe">Safe</li>
-    <li data-category="fixed">Fixed</li>
-  </ul>
-</nav>
+<div id="matchesContainer"></div>
 
-<main id="predictions" class="predictions-container">
-  <p>Loading predictions...</p>
-</main>
+<!-- MODAL -->
+<div class="modal-bg" id="modal">
+  <div class="modal">
+    <h2 style="text-align:center;margin-bottom:20px;">Unlock VIP Access</h2>
 
-<footer class="bottom-menu">
-  <button data-category="free">Free</button>
-  <button data-category="safe">Safe</button>
-  <button data-category="fixed">Fixed</button>
-</footer>
+    <div class="plan active" onclick="selectPlan(this,129)">
+      Safe VIP – Weekly<br><small>$129 / week</small>
+    </div>
 
+    <div class="plan" onclick="selectPlan(this,399)">
+      Safe VIP – Monthly<br><small>$399 / month</small>
+    </div>
+
+    <button class="pay-btn" onclick="payNow()">Pay Now</button>
+  </div>
+</div>
+
+<script type="module" src="./js/app.js"></script>
 </body>
 </html>
