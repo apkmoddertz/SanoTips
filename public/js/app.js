@@ -12,29 +12,111 @@ menuToggle.addEventListener("click", () => {
 // Current category
 let currentCategory = "free";
 
-// Fetch and render predictions from Firestore
+// Helper: format date
+function formatDate(dateString) {
+  const d = new Date(dateString);
+  return d.toLocaleString("en-US", {
+    weekday: "short",
+    hour: "numeric",
+    minute: "numeric",
+    month: "short",
+    day: "numeric"
+  });
+}
+
+// Create prediction card
+function createPredictionCard(pred, isLocked = false) {
+  const card = document.createElement("div");
+  card.className = "prediction-card";
+
+  if (isLocked) {
+    card.innerHTML = `
+      <div class="locked-overlay">
+        <div class="lock-icon">🔒</div>
+        <h3>VIP Content Locked</h3>
+        <p>Upgrade to ${pred.category} Plan to see this high-confidence prediction.</p>
+        <button class="unlock-btn">Unlock Now</button>
+      </div>
+      <div class="blurred-content">
+        <div class="header">
+          <span>${pred.league}</span>
+          <span>${formatDate(pred.date)}</span>
+        </div>
+        <div class="teams">
+          <span>${pred.homeTeam || pred.home}</span>
+          <span>VS</span>
+          <span>${pred.awayTeam || pred.away}</span>
+        </div>
+        <div class="prediction-box">
+          <div class="h-12"></div>
+        </div>
+      </div>
+    `;
+    // Unlock button click
+    card.querySelector(".unlock-btn").addEventListener("click", () => {
+      alert("Redirect to premium plan!");
+    });
+    return card;
+  }
+
+  // Normal card
+  card.innerHTML = `
+    <div class="card-header">
+      <span class="league">${pred.league}</span>
+      <span class="time">${formatDate(pred.date)}</span>
+    </div>
+    <div class="teams">
+      <span class="home">${pred.homeTeam || pred.home}</span>
+      <span class="vs">VS</span>
+      <span class="away">${pred.awayTeam || pred.away}</span>
+    </div>
+    <div class="prediction-box">
+      <div class="prediction-info">
+        <div>
+          <div class="label">Prediction</div>
+          <div class="value">${pred.prediction}</div>
+        </div>
+        <div>
+          <div class="label">Odds</div>
+          <div class="value">${pred.odds ? pred.odds.toFixed(2) : "-"}</div>
+        </div>
+        <div class="status">
+          ${pred.status === "Won" ? "✅" : pred.status === "Lost" ? "❌" : "⏳"}
+        </div>
+      </div>
+      ${pred.analysis ? `<div class="analysis">"${pred.analysis}"</div>` : ""}
+    </div>
+  `;
+
+  return card;
+}
+
+// Fetch and render predictions
 async function renderPredictions(category) {
   currentCategory = category;
   predictionsContainer.innerHTML = "<p>Loading...</p>";
-  
+
   const predictions = await getMatches(); // Fetch from Firestore
-  const filtered = predictions.filter(p => p.category.toLowerCase() === category.toLowerCase());
+  const filtered = predictions.filter(
+    p => (p.category || "").toLowerCase() === category.toLowerCase()
+  );
 
   predictionsContainer.innerHTML = "";
   if (!filtered.length) {
-    predictionsContainer.innerHTML = "<div class='empty-msg'>No predictions available.</div>";
+    predictionsContainer.innerHTML =
+      "<div class='empty-msg'>No predictions available.</div>";
     return;
   }
 
-  filtered.forEach(p => {
-    const card = document.createElement("div");
-    card.className = "prediction-card";
-    card.innerHTML = `
-      <h3>${p.league}: ${p.homeTeam || p.home} vs ${p.awayTeam || p.away}</h3>
-      <p>Date: ${new Date(p.date).toLocaleString()}</p>
-      <p>Prediction: ${p.prediction}</p>
-      <p>Status: ${p.status}</p>
-    `;
+  filtered.forEach(pred => {
+    // Lock content if safe/fixed and user has no access
+    let isLocked = false;
+    if ((category === "safe" || category === "fixed") && pred.status === "pending") {
+      // You can add real user check here
+      isLocked = false; // set true if user is not premium
+    }
+
+    const card = createPredictionCard(pred, isLocked);
     predictionsContainer.appendChild(card);
   });
 }
