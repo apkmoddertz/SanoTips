@@ -4,337 +4,146 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Sano Betting Tips</title>
-
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
-
 <style>
-
-/* ===== GLOBAL ===== */
-body {
-  margin: 0;
-  font-family: 'Segoe UI', sans-serif;
-  background: linear-gradient(135deg, #0f172a, #1e293b);
-  color: #fff;
-}
-
-/* ===== HEADER ===== */
-.header {
-  position: fixed;
-  top: 0;
-  width: 100%;
-  background: rgba(15, 23, 42, 0.95);
-  backdrop-filter: blur(10px);
-  padding: 18px 10px 12px;
-  text-align: center;
-  z-index: 1000;
-}
-
-.header h1 {
-  margin: 0 0 12px;
-  font-size: 22px;
-  font-weight: 700;
-  background: linear-gradient(90deg,#facc15,#f59e0b);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
-
-/* ===== CATEGORY MENU ===== */
-.category-nav {
-  display: flex;
-  justify-content: space-around;
-}
-
-.category-btn {
-  background: none;
-  border: none;
-  color: #94a3b8;
-  font-size: 13px;
-  font-weight: 600;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 4px;
-  cursor: pointer;
-  padding: 6px;
-  transition: 0.3s;
-}
-
-.category-btn i {
-  font-size: 18px;
-}
-
-.category-btn.active {
-  color: #facc15;
-}
-
-/* ===== CONTENT ===== */
-#predictions {
-  padding: 150px 15px 40px;
-}
-
-/* ===== DATE HEADER ===== */
-.date-header {
-  margin-top: 25px;
-  font-weight: 700;
-  color: #facc15;
-  font-size: 14px;
-}
-
-/* ===== CARD ===== */
-.prediction-card {
-  background: rgba(255,255,255,0.05);
-  backdrop-filter: blur(10px);
-  padding: 15px;
-  margin-top: 12px;
-  border-radius: 14px;
-  box-shadow: 0 6px 20px rgba(0,0,0,0.4);
-  animation: fadeIn 0.4s ease;
-}
-
-@keyframes fadeIn {
-  from {opacity:0; transform: translateY(10px);}
-  to {opacity:1; transform: translateY(0);}
-}
-
-.card-top {
-  display: flex;
-  justify-content: space-between;
-  font-size: 12px;
-  color: #94a3b8;
-  margin-bottom: 10px;
-}
-
-.teams {
-  display: flex;
-  justify-content: space-between;
-  font-weight: 600;
-  margin-bottom: 10px;
-}
-
-.vs {
-  color: #facc15;
-}
-
-.card-bottom {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.prediction-text {
-  font-size: 15px;
-  font-weight: 600;
-}
-
-.odds-box {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-
-.odds {
-  font-weight: 700;
-  color: #10b981;
-}
-
-.status {
-  font-size: 10px;
-}
-
-.status.win { color: #10b981; }
-.status.lose { color: #ef4444; }
-.status.pending { color: #facc15; }
-
-/* ===== LOADING ===== */
-.loading-spinner {
-  width: 40px;
-  height: 40px;
-  border: 4px solid rgba(255,255,255,0.1);
-  border-top: 4px solid #facc15;
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-  margin: 60px auto;
-}
-
-@keyframes spin {
-  100% { transform: rotate(360deg); }
-}
-
-.empty-msg, .error-msg {
-  text-align: center;
-  padding: 30px;
-  color: #94a3b8;
-}
-
+body{margin:0;font-family:Segoe UI,sans-serif;background:linear-gradient(135deg,#0f172a,#1e293b);color:#fff;}
+header{position:fixed;top:0;width:100%;background:#111827;text-align:center;padding:18px 10px 10px;z-index:1000;}
+header h1{margin:0 0 12px;font-size:22px;background:linear-gradient(90deg,#facc15,#f59e0b);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.menu{display:flex;justify-content:space-around;}
+.menu button{background:none;border:none;color:#94a3b8;display:flex;flex-direction:column;align-items:center;gap:4px;font-size:13px;font-weight:600;cursor:pointer;}
+.menu button i{font-size:18px;}
+.menu button.active{color:#facc15;}
+#predictions{padding:150px 15px 40px;}
+.date-header{margin-top:25px;font-weight:700;color:#facc15;}
+.card{background:rgba(255,255,255,0.05);padding:15px;margin-top:12px;border-radius:14px;box-shadow:0 6px 20px rgba(0,0,0,0.4);}
+.card-top{display:flex;justify-content:space-between;font-size:12px;color:#94a3b8;}
+.teams{display:flex;justify-content:space-between;margin:10px 0;font-weight:600;}
+.vs{color:#facc15;}
+.bottom{display:flex;justify-content:space-between;align-items:center;}
+.odds{color:#10b981;font-weight:700;}
+.card.vip{filter:blur(4px);opacity:0.6;pointer-events:none;}
+.loading{border:4px solid rgba(255,255,255,0.1);border-top:4px solid #facc15;border-radius:50%;width:40px;height:40px;animation:spin 1s linear infinite;margin:60px auto;}
+@keyframes spin{100%{transform:rotate(360deg);}}
+.empty{text-align:center;padding:30px;color:#94a3b8;}
 </style>
 </head>
 <body>
 
-<header class="header">
+<header>
   <h1>Sano Betting Tips</h1>
-
-  <div class="category-nav">
-    <button class="category-btn active" data-category="free">
-      <i class="bi bi-circle-fill"></i>
-      Free
-    </button>
-
-    <button class="category-btn" data-category="safe">
-      <i class="bi bi-shield-fill"></i>
-      Safe
-    </button>
-
-    <button class="category-btn" data-category="fixed">
-      <i class="bi bi-star-fill"></i>
-      Fixed
-    </button>
+  <div class="menu">
+    <button class="active" data-category="free"><i class="bi bi-circle-fill"></i> Free</button>
+    <button data-category="safe"><i class="bi bi-shield-fill"></i> Safe</button>
+    <button data-category="fixed"><i class="bi bi-star-fill"></i> Fixed</button>
   </div>
 </header>
 
-<main id="predictions">
-  <div class="loading-spinner"></div>
-</main>
+<main id="predictions"><div class="loading"></div></main>
 
-<!-- ===== FIREBASE + APP SCRIPT ===== -->
 <script type="module">
-
-// 🔥 1️⃣ IMPORT FIREBASE
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { getFirestore, collection, getDocs, query, where } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-// 🔥 2️⃣ YOUR FIREBASE CONFIG (PUT YOUR REAL CONFIG HERE)
 const firebaseConfig = {
-  apiKey: "YOUR_API_KEY",
-  authDomain: "YOUR_DOMAIN",
-  projectId: "YOUR_PROJECT_ID",
-  storageBucket: "YOUR_BUCKET",
-  messagingSenderId: "YOUR_SENDER_ID",
-  appId: "YOUR_APP_ID"
+  apiKey: "AIzaSyC0BSUvubGtHxeHZ_pnh776bzoGKGxXNbU",
+  authDomain: "voltflow-35a0b.firebaseapp.com",
+  projectId: "voltflow-35a0b",
+  storageBucket: "voltflow-35a0b.firebasestorage.app",
+  messagingSenderId: "241701625823",
+  appId: "1:241701625823:web:d4d7d9362e0207e5a32e6a"
 };
 
-// 🔥 3️⃣ INITIALIZE
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-// 🔥 4️⃣ FETCH MATCHES
-async function getMatches() {
-  const querySnapshot = await getDocs(collection(db, "matches"));
-  const matches = [];
-  querySnapshot.forEach(doc => {
-    matches.push(doc.data());
+const container = document.getElementById("predictions");
+const buttons = document.querySelectorAll(".menu button");
+
+let currentCategory="free";
+let currentUserPlan="free";
+
+// ✅ Check if user logged in
+const localUser = JSON.parse(localStorage.getItem("user"));
+if(!localUser){ window.location.href="login.html"; }
+
+// ✅ Get subscription from Firestore
+async function getUserSubscription() {
+  const q = query(collection(db,"users"), where("email","==",localUser.email));
+  const snap = await getDocs(q);
+  if(snap.empty) return "free";
+  let plan="free";
+  snap.forEach(doc=>plan=doc.data().subscription||"free");
+  return plan;
+}
+
+// 🔥 Render matches
+async function getMatches(){ 
+  const snap = await getDocs(collection(db,"matches"));
+  const data=[]; snap.forEach(d=>data.push(d.data())); return data;
+}
+
+// 🔒 Should blur
+function shouldBlur(matchCategory){
+  const levels = { free:1, safe:2, fixed:3 };
+  const planLevels = { free:1, safe:2, fixed:3 };
+  const userLevel = planLevels[currentUserPlan];
+  const matchLevel = matchCategory==="safe" && currentUserPlan==="fixed" ? 0 : levels[matchCategory]; // fixed skips safe
+  return userLevel < matchLevel;
+}
+
+// 🔥 Render function
+async function render(category){
+  currentCategory=category;
+  container.innerHTML='<div class="loading"></div>';
+  const matches = await getMatches();
+  const filtered = matches.filter(m => (m.category||"").toLowerCase()===category.toLowerCase());
+  filtered.sort((a,b)=> new Date(b.date)-new Date(a.date));
+  container.innerHTML="";
+  if(!filtered.length){ container.innerHTML='<div class="empty">No matches available</div>'; return; }
+  let lastDate=null;
+  filtered.forEach(m=>{
+    const matchDate=new Date(m.date);
+    const dateString = matchDate.getDate().toString().padStart(2,'0')+" "+
+                       matchDate.toLocaleString('default',{month:'short'})+" "+
+                       matchDate.getFullYear();
+    if(dateString!==lastDate){ const dateDiv=document.createElement("div"); dateDiv.className="date-header"; dateDiv.textContent=dateString; container.appendChild(dateDiv); lastDate=dateString; }
+    const hideVIP = shouldBlur(m.category);
+    const card = document.createElement("div");
+    card.className="card"+(hideVIP?" vip":"");
+    card.innerHTML=`
+      <div class="card-top">
+        <span>${m.league||"-"}</span>
+        <span>${matchDate.toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'})}</span>
+      </div>
+      <div class="teams">
+        <span>${m.homeTeam||"Home"}</span>
+        <span class="vs">VS</span>
+        <span>${m.awayTeam||"Away"}</span>
+      </div>
+      <div class="bottom">
+        <div><small>Prediction</small><div>${hideVIP?"🔒 Upgrade Plan":(m.prediction||"-")}</div></div>
+        <div class="odds">${hideVIP?"00":Number(m.odd||m.odds||0).toFixed(2)}</div>
+      </div>
+    `;
+    container.appendChild(card);
   });
-  return matches;
 }
 
-// --------------------- UI LOGIC ---------------------
-const predictionsContainer = document.getElementById("predictions");
-const categoryButtons = document.querySelectorAll(".category-btn");
-let currentCategory = "free";
+// 🛠 Initial load
+(async()=>{
+  currentUserPlan = await getUserSubscription();
+  render(currentCategory);
+})();
 
-const statusIcons = {
-  pending: `<span class="status pending">●</span>`,
-  win: `<span class="status win">●</span>`,
-  lose: `<span class="status lose">●</span>`
-};
-
-function getStatusIcon(status){
-    if(!status) return statusIcons.pending;
-    const s = status.toLowerCase();
-    if(["win","won"].includes(s)) return statusIcons.win;
-    if(["lose","lost"].includes(s)) return statusIcons.lose;
-    return statusIcons.pending;
-}
-
-async function renderPredictions(category){
-  currentCategory = category;
-  predictionsContainer.innerHTML = `<div class="loading-spinner"></div>`;
-
-  try{
-    const predictions = await getMatches();
-
-    const filtered = predictions.filter(
-      p => (p.category || "").toLowerCase() === category.toLowerCase()
-    );
-
-    filtered.sort((a,b)=> new Date(b.date) - new Date(a.date));
-
-    predictionsContainer.innerHTML = "";
-
-    if(!filtered.length){
-      predictionsContainer.innerHTML =
-        "<div class='empty-msg'>No matches available.</div>";
-      return;
-    }
-
-    let lastDate = null;
-
-    filtered.forEach(p => {
-      const matchDate = new Date(p.date);
-      const dateString =
-        matchDate.getDate().toString().padStart(2,'0') + " " +
-        matchDate.toLocaleString('default', {month:'short'}) + " " +
-        matchDate.getFullYear();
-
-      if(dateString !== lastDate){
-        const dateHeader = document.createElement("div");
-        dateHeader.className = "date-header";
-        dateHeader.textContent = dateString;
-        predictionsContainer.appendChild(dateHeader);
-        lastDate = dateString;
-      }
-
-      const oddsValue = Number(p.odds || 0);
-
-      const card = document.createElement("div");
-      card.className = "prediction-card";
-      card.innerHTML = `
-        <div class="card-top">
-          <span>${p.league || "-"}</span>
-          <span>${matchDate.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>
-        </div>
-
-        <div class="teams">
-          <span>${p.homeTeam || "Home"}</span>
-          <span class="vs">VS</span>
-          <span>${p.awayTeam || "Away"}</span>
-        </div>
-
-        <div class="card-bottom">
-          <div>
-            <small>Prediction</small>
-            <div class="prediction-text">${p.prediction || "-"}</div>
-          </div>
-
-          <div class="odds-box">
-            ${getStatusIcon(p.status)}
-            <span class="odds">${oddsValue.toFixed(2)}</span>
-          </div>
-        </div>
-      `;
-
-      predictionsContainer.appendChild(card);
-    });
-
-  }catch(err){
-    console.error(err);
-    predictionsContainer.innerHTML =
-      "<div class='error-msg'>Error loading matches.</div>";
-  }
-}
-
-// CATEGORY CLICK
-categoryButtons.forEach(btn => {
-  btn.addEventListener("click", () => {
-    categoryButtons.forEach(b => b.classList.remove("active"));
+// 🔁 Buttons
+buttons.forEach(btn=>{
+  btn.addEventListener("click",()=>{
+    buttons.forEach(b=>b.classList.remove("active"));
     btn.classList.add("active");
-    renderPredictions(btn.dataset.category);
+    render(btn.dataset.category);
   });
 });
 
-// INITIAL LOAD
-renderPredictions(currentCategory);
-
 </script>
-
 </body>
 </html>
