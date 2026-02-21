@@ -1,40 +1,43 @@
+// js/app.js
+import { getMatches } from "./firebase.js";
+
 const sidebar = document.getElementById("sidebar");
 const menuToggle = document.getElementById("menu-toggle");
+const predictionsContainer = document.getElementById("predictions");
+
 menuToggle.addEventListener("click", () => {
   sidebar.classList.toggle("show");
 });
 
-// Example static predictions
-const predictions = [
-  { league: "Premier League", home: "Liverpool", away: "Man Utd", date: "2026-02-20", prediction: "Home Win", category: "free", status: "pending" },
-  { league: "La Liga", home: "Real Madrid", away: "Barcelona", date: "2026-02-21", prediction: "Away Win", category: "safe", status: "pending" }
-];
+// Current category
+let currentCategory = "free";
 
-const predictionsContainer = document.getElementById("predictions");
+// Fetch and render predictions from Firestore
+async function renderPredictions(category) {
+  currentCategory = category;
+  predictionsContainer.innerHTML = "<p>Loading...</p>";
+  
+  const predictions = await getMatches(); // Fetch from Firestore
+  const filtered = predictions.filter(p => p.category.toLowerCase() === category.toLowerCase());
 
-function renderPredictions(category) {
   predictionsContainer.innerHTML = "";
-  const filtered = predictions.filter(p => p.category === category);
+  if (!filtered.length) {
+    predictionsContainer.innerHTML = "<div class='empty-msg'>No predictions available.</div>";
+    return;
+  }
+
   filtered.forEach(p => {
     const card = document.createElement("div");
     card.className = "prediction-card";
     card.innerHTML = `
-      <h3>${p.league}: ${p.home} vs ${p.away}</h3>
-      <p>Date: ${p.date}</p>
+      <h3>${p.league}: ${p.homeTeam || p.home} vs ${p.awayTeam || p.away}</h3>
+      <p>Date: ${new Date(p.date).toLocaleString()}</p>
       <p>Prediction: ${p.prediction}</p>
       <p>Status: ${p.status}</p>
     `;
     predictionsContainer.appendChild(card);
   });
 }
-
-// Default view
-renderPredictions("free");
-
-// Bottom menu click
-document.querySelectorAll(".bottom-menu button").forEach(btn => {
-  btn.addEventListener("click", () => renderPredictions(btn.dataset.category));
-});
 
 // Sidebar click
 document.querySelectorAll(".sidebar li").forEach(li => {
@@ -43,3 +46,11 @@ document.querySelectorAll(".sidebar li").forEach(li => {
     sidebar.classList.remove("show");
   });
 });
+
+// Bottom menu click
+document.querySelectorAll(".bottom-menu button").forEach(btn => {
+  btn.addEventListener("click", () => renderPredictions(btn.dataset.category));
+});
+
+// Initial render
+renderPredictions(currentCategory);
