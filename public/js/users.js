@@ -1,31 +1,19 @@
-import { db, auth } from "./firebase.js";
-import { doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+// Simplified auth check
+export const currentUser = {
+  email: "user@gmail.com", // replace with real Firebase auth
+  role: "user",            // 'admin' can edit
+  subscription: "safe",
+  status: "active",
+  expires: "2026-03-01"
+};
 
-const userDiv = document.getElementById("user-info");
+export function isAdmin() {
+  return currentUser.role === "admin";
+}
 
-auth.onAuthStateChanged(async user => {
-  if (!user) return;
-  
-  const userRef = doc(db, "users", user.uid);
-  const userSnap = await getDoc(userRef);
-
-  if (!userSnap.exists()) {
-    userDiv.innerHTML = "<p>User data not found!</p>";
-    return;
-  }
-
-  const data = userSnap.data();
-  
-  const today = new Date();
-  const expiryDate = new Date(data.expires);
-
-  const isExpired = today > expiryDate;
-
-  userDiv.innerHTML = `
-    <h3>Welcome, ${user.email}</h3>
-    <p>Subscription: ${data.subscription} (${data.plan})</p>
-    <p>Status: ${isExpired ? "Expired" : data.status}</p>
-    <p>Expires on: ${data.expires}</p>
-    <p>Price: $${data.price}</p>
-  `;
-});
+export function hasAccess(category) {
+  if (category === "free") return true;
+  if (category === "safe") return ["safe", "fixed"].includes(currentUser.subscription) && currentUser.status === "active";
+  if (category === "fixed") return currentUser.subscription === "fixed" && currentUser.status === "active";
+  return false;
+}
