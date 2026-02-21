@@ -1,5 +1,4 @@
 // public/js/app.js
-
 import { getMatches } from "./firebase.js";
 
 // --------------------- Authentication ---------------------
@@ -13,15 +12,18 @@ if(!user){
 const sidebar = document.getElementById("sidebar");
 const menuToggle = document.getElementById("menu-toggle");
 const predictionsContainer = document.getElementById("predictions");
-const bottomButtons = document.querySelectorAll(".bottom-menu button");
-const sidebarItems = document.querySelectorAll(".sidebar li");
+const categoryButtons = document.querySelectorAll(".category-btn");
+const membersFeed = document.getElementById("members-feed");
 
 let currentCategory = "free"; // Default category for new visitors
+let membersInterval;
 
 // --------------------- Sidebar Toggle ---------------------
-menuToggle.addEventListener("click", () => {
-  sidebar.classList.toggle("show");
-});
+if(menuToggle){
+  menuToggle.addEventListener("click", () => {
+    sidebar.classList.toggle("show");
+  });
+}
 
 // --------------------- Status Icons ---------------------
 const statusIcons = {
@@ -43,6 +45,14 @@ function getStatusIcon(status){
 // --------------------- Render Matches Grouped by Date ---------------------
 async function renderPredictions(category){
   currentCategory = category;
+  // If Members, do not show matches
+  if(category === "members"){
+    predictionsContainer.innerHTML = "<div class='loading-spinner'></div>";
+    startMembersFeed();
+    return;
+  }
+
+  stopMembersFeed();
   predictionsContainer.innerHTML = `<div class="loading-spinner"></div>`; // Centered spinner
 
   try{
@@ -117,18 +127,42 @@ async function renderPredictions(category){
   }
 }
 
-// --------------------- Sidebar Click ---------------------
+// --------------------- Category Buttons Click ---------------------
+categoryButtons.forEach(btn => {
+  btn.addEventListener("click", () => {
+    categoryButtons.forEach(b => b.classList.remove("active"));
+    btn.classList.add("active");
+    const cat = btn.dataset.category;
+    renderPredictions(cat);
+  });
+});
+
+// --------------------- Members Feed ---------------------
+function startMembersFeed(){
+  stopMembersFeed();
+  membersFeed.textContent = '';
+  let membersData = [];
+  membersInterval = setInterval(() => {
+    const randomEmail = `ngim${Math.floor(Math.random()*999)}@gmail.com`;
+    const now = new Date();
+    const timeStr = now.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit', second:'2-digit'});
+    membersData.push(`${randomEmail} joined ${timeStr}`);
+    if(membersData.length > 8) membersData.shift(); // Keep last 8
+    membersFeed.textContent = membersData.join(' | ');
+  }, 15000);
+}
+
+function stopMembersFeed(){
+  if(membersInterval) clearInterval(membersInterval);
+  membersFeed.textContent = '';
+}
+
+// --------------------- Sidebar Click (Optional) ---------------------
+const sidebarItems = document.querySelectorAll(".sidebar li");
 sidebarItems.forEach(li => {
   li.addEventListener("click", () => {
     renderPredictions(li.dataset.category);
     sidebar.classList.remove("show");
-  });
-});
-
-// --------------------- Bottom Menu Click ---------------------
-bottomButtons.forEach(btn => {
-  btn.addEventListener("click", () => {
-    renderPredictions(btn.dataset.category);
   });
 });
 
