@@ -4,7 +4,8 @@ import { getMatches } from "./firebase.js";
 
 // --------------------- Authentication ---------------------
 const user = JSON.parse(localStorage.getItem("user"));
-if (!user) {
+if (!user || !user.subscription) {
+  // User not logged in or no subscription info
   window.location.href = "/login.html";
 }
 
@@ -42,7 +43,7 @@ function canViewMatch(user, category, status) {
   const isVipCategory = ["safe", "fixed"].includes(category.toLowerCase());
   const isPending = (status || "").toLowerCase() === "pending";
 
-  // Free users see only 'free'
+  // Free users see only free tips
   if (user.subscription.toLowerCase() === "free" && category.toLowerCase() !== "free") {
     return false;
   }
@@ -64,10 +65,13 @@ async function renderPredictions(category) {
 
   try {
     const predictions = await getMatches();
+
+    // Filter by category
     let filtered = predictions.filter(p => (p.category || "").toLowerCase() === category.toLowerCase());
 
     // Sort by date descending
     filtered.sort((a, b) => new Date(b.date) - new Date(a.date));
+
     predictionsContainer.innerHTML = "";
 
     if (!filtered.length) {
