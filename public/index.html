@@ -11,12 +11,109 @@
 <link rel="stylesheet" href="css/style.css">
 
 <script type="module" src="js/app.js"></script>
+<style>
+/* ===== Fixed Header ===== */
+.navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  background: #fff;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  z-index: 1000;
+  padding: 0.5rem 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.navbar h1 {
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: #f59e0b;
+  margin-bottom: 0.5rem;
+}
+
+.category-nav {
+  display: flex;
+  justify-content: space-around;
+  width: 100%;
+  max-width: 400px;
+  margin-bottom: 0.5rem;
+}
+
+.category-btn {
+  background: none;
+  border: none;
+  padding: 0.5rem 0.8rem;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  color: #333;
+  transition: 0.3s;
+}
+
+.category-btn.active {
+  color: #f59e0b;
+  font-weight: 600;
+}
+
+.category-btn.active::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 10%;
+  width: 80%;
+  height: 3px;
+  background: #f59e0b;
+  border-radius: 2px;
+}
+
+.category-btn:hover {
+  color: #fbbf24;
+}
+
+/* Members feed */
+.members-feed {
+  font-size: 0.85rem;
+  color: #555;
+  text-align: center;
+  min-height: 18px;
+}
+
+/* Add top padding to predictions container */
+.predictions-container {
+  padding-top: 120px; /* Adjust header height */
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+</style>
 </head>
 <body>
 
 <header class="navbar">
-  <h1>SanoTips</h1>
-  <button id="menu-toggle">☰</button>
+  <h1>Sano Betting Tips</h1>
+
+  <nav class="category-nav">
+    <button class="category-btn active" data-category="free">
+      <i class="bi bi-circle-fill"></i> Free
+    </button>
+    <button class="category-btn" data-category="safe">
+      <i class="bi bi-shield-fill"></i> Safe
+    </button>
+    <button class="category-btn" data-category="fixed">
+      <i class="bi bi-star-fill"></i> Fixed
+    </button>
+    <button class="category-btn" data-category="members">
+      <i class="bi bi-people-fill"></i> Members
+    </button>
+  </nav>
+
+  <div class="members-feed" id="members-feed">Loading members...</div>
 </header>
 
 <nav id="sidebar" class="sidebar">
@@ -31,11 +128,51 @@
   <p>Loading predictions...</p>
 </main>
 
-<footer class="bottom-menu">
-  <button data-category="free">Free</button>
-  <button data-category="safe">Safe</button>
-  <button data-category="fixed">Fixed</button>
-</footer>
+<script>
+const categoryButtons = document.querySelectorAll(".category-btn");
+const membersFeed = document.getElementById("members-feed");
+let membersData = [];
+
+// ===== Category Button Click =====
+categoryButtons.forEach(btn => {
+  btn.addEventListener("click", () => {
+    categoryButtons.forEach(b => b.classList.remove("active"));
+    btn.classList.add("active");
+    const cat = btn.dataset.category;
+
+    if(cat === "members"){
+      startMembersFeed();
+    } else {
+      stopMembersFeed();
+    }
+
+    // Call your existing renderPredictions function if not members
+    if(typeof renderPredictions === "function" && cat !== "members"){
+      renderPredictions(cat);
+    }
+  });
+});
+
+// ===== Live Members Feed Simulation =====
+let membersInterval;
+function startMembersFeed(){
+  membersData = [];
+  membersFeed.textContent = '';
+  membersInterval = setInterval(() => {
+    const randomEmail = `ngim${Math.floor(Math.random()*999)}@gmail.com`;
+    const now = new Date();
+    const timeStr = now.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit', second:'2-digit'});
+    membersData.push(`${randomEmail} joined ${timeStr}`);
+    if(membersData.length > 8) membersData.shift(); // Keep last 8
+    membersFeed.textContent = membersData.join(' | ');
+  }, 15000); // every 15 seconds
+}
+
+function stopMembersFeed(){
+  clearInterval(membersInterval);
+  membersFeed.textContent = '';
+}
+</script>
 
 </body>
 </html>
