@@ -1,5 +1,4 @@
 // js/app.js
-
 import { getMatches } from "./firebase.js";
 
 const sidebar = document.getElementById("sidebar");
@@ -13,7 +12,7 @@ menuToggle.addEventListener("click", () => {
   sidebar.classList.toggle("show");
 });
 
-// SVG icons
+// SVG icons for status
 const statusIcons = {
   pending: `<svg xmlns="http://www.w3.org/2000/svg" class="status-icon pending" viewBox="0 0 24 24" fill="none" stroke="#facc15" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="24" height="24">
     <circle cx="12" cy="12" r="10"></circle>
@@ -28,20 +27,22 @@ const statusIcons = {
   </svg>`
 };
 
-// Get status icon based on match status
+// Get normalized status icon
 function getStatusIcon(status) {
-  const s = (status || "pending").toLowerCase();
-  return statusIcons[s] || statusIcons.pending;
+  if (!status) return statusIcons.pending;
+  const s = status.toString().trim().toLowerCase();
+  if (s === "win" || s === "won") return statusIcons.win;
+  if (s === "lose" || s === "lost") return statusIcons.lose;
+  return statusIcons.pending;
 }
 
-// Render matches
+// Render predictions
 async function renderPredictions(category) {
   currentCategory = category;
   predictionsContainer.innerHTML = "<p>Loading...</p>";
 
   try {
     const predictions = await getMatches();
-
     const filtered = predictions.filter(p =>
       (p.category || "").toLowerCase() === category.toLowerCase()
     );
