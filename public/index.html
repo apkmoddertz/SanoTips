@@ -3,163 +3,151 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Sano Tips</title>
+<title>Sano Match Card</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
 
 <style>
-*{margin:0;padding:0;box-sizing:border-box;font-family:'Inter',sans-serif;}
-body{background:#141517;color:#fff;padding:20px;}
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:'Inter',sans-serif;
+}
 
-h1{margin-bottom:20px}
-
-.card{
-  background:#1a1b1e;
-  border-radius:16px;
+body{
+  background:#0f1115;
+  color:#fff;
   padding:20px;
+}
+
+/* Card */
+.card{
+  background:#181a20;
+  border-radius:18px;
+  padding:22px;
   margin-bottom:20px;
   border:1px solid rgba(255,255,255,0.05);
-  position:relative;
-  overflow:hidden;
   transition:.3s;
 }
 
 .card:hover{
   border:1px solid rgba(16,185,129,.4);
+  transform:translateY(-3px);
 }
 
-.league{
-  font-size:12px;
-  color:#888;
-  text-transform:uppercase;
-  font-weight:700;
-  margin-bottom:10px;
-}
-
-.match{
+/* Top Section */
+.top{
   display:flex;
   justify-content:space-between;
   align-items:center;
   margin-bottom:15px;
 }
 
-.match h3{font-size:18px;}
-.vs{color:#555;font-weight:800;}
+.league{
+  font-size:12px;
+  color:#9ca3af;
+  font-weight:700;
+  text-transform:uppercase;
+  letter-spacing:.5px;
+}
 
+.time{
+  font-size:12px;
+  color:#6b7280;
+}
+
+/* Teams Section */
+.teams{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin:20px 0;
+}
+
+.team{
+  text-align:center;
+  width:40%;
+}
+
+.team-name{
+  font-size:17px;
+  font-weight:700;
+}
+
+.vs{
+  font-weight:800;
+  color:#374151;
+  font-size:14px;
+}
+
+/* Prediction Box */
 .prediction-box{
-  background:#25262b;
-  padding:15px;
-  border-radius:12px;
+  background:#20222a;
+  border-radius:14px;
+  padding:16px;
   display:flex;
   justify-content:space-between;
   align-items:center;
   border-left:5px solid #facc15;
 }
 
-.prediction-title{
-  font-size:12px;
-  color:#888;
-  margin-bottom:5px;
+.prediction-left{
+  display:flex;
+  flex-direction:column;
+}
+
+.prediction-label{
+  font-size:11px;
   text-transform:uppercase;
+  color:#9ca3af;
+  margin-bottom:6px;
 }
 
 .prediction-value{
-  color:#10b981;
-  font-weight:700;
   font-size:18px;
-}
-
-.odds{font-size:18px;font-weight:700;}
-
-.locked{
-  position:absolute;
-  inset:0;
-  background:rgba(0,0,0,.85);
-  backdrop-filter:blur(8px);
-  display:flex;
-  flex-direction:column;
-  justify-content:center;
-  align-items:center;
-  text-align:center;
-  padding:20px;
-}
-
-.unlock-btn{
-  background:#10b981;
-  color:#000;
-  border:none;
-  padding:12px 25px;
-  border-radius:12px;
   font-weight:700;
-  cursor:pointer;
+  color:#10b981;
 }
 
-.modal-bg{
-  position:fixed;
-  inset:0;
-  background:rgba(0,0,0,.7);
-  display:none;
-  justify-content:center;
-  align-items:center;
-}
-
-.modal{
-  background:#1a1b1e;
-  width:95%;
-  max-width:400px;
-  border-radius:20px;
-  padding:25px;
-  border:1px solid rgba(255,255,255,.1);
-}
-
-.plan{
-  padding:15px;
-  border-radius:12px;
-  border:1px solid rgba(255,255,255,.1);
-  margin-bottom:15px;
-  cursor:pointer;
-}
-
-.plan.active{
-  background:rgba(16,185,129,.2);
-  border:1px solid #10b981;
-}
-
-.pay-btn{
-  width:100%;
-  padding:15px;
-  background:#10b981;
-  border:none;
-  border-radius:12px;
-  font-weight:700;
-  font-size:16px;
-  cursor:pointer;
+.odds{
+  font-size:20px;
+  font-weight:800;
 }
 </style>
 </head>
 <body>
 
-<h1>🔥 Sano Tips</h1>
+<h2 style="margin-bottom:20px;">🔥 Today’s Tips</h2>
 
-<div id="matchesContainer"></div>
+<div class="card">
 
-<!-- MODAL -->
-<div class="modal-bg" id="modal">
-  <div class="modal">
-    <h2 style="text-align:center;margin-bottom:20px;">Unlock VIP Access</h2>
-
-    <div class="plan active" onclick="selectPlan(this,129)">
-      Safe VIP – Weekly<br><small>$129 / week</small>
-    </div>
-
-    <div class="plan" onclick="selectPlan(this,399)">
-      Safe VIP – Monthly<br><small>$399 / month</small>
-    </div>
-
-    <button class="pay-btn" onclick="payNow()">Pay Now</button>
+  <div class="top">
+    <div class="league">Premier League</div>
+    <div class="time">21 Feb • 20:30</div>
   </div>
+
+  <div class="teams">
+    <div class="team">
+      <div class="team-name">Liverpool</div>
+    </div>
+
+    <div class="vs">VS</div>
+
+    <div class="team">
+      <div class="team-name">Man United</div>
+    </div>
+  </div>
+
+  <div class="prediction-box">
+    <div class="prediction-left">
+      <div class="prediction-label">Prediction</div>
+      <div class="prediction-value">Home Win</div>
+    </div>
+    <div class="odds">1.50</div>
+  </div>
+
 </div>
 
-<script type="module" src="./js/app.js"></script>
 </body>
 </html>
