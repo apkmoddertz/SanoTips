@@ -1,26 +1,65 @@
-/* Path: public/css/style.css */
 body {
-  font-family: Arial, sans-serif;
-  padding: 20px;
+  font-family: sans-serif;
+  margin: 0;
+  background: #141517;
+  color: #fff;
 }
 
-h1 {
-  text-align: center;
-  margin-bottom: 20px;
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  padding: 1rem;
+  background: #1a1b1e;
+  position: sticky;
+  top: 0;
+}
+
+.sidebar {
+  position: fixed;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 220px;
+  background: #1a1b1e;
+  padding: 2rem 1rem;
+  transform: translateX(-100%);
+  transition: transform 0.3s;
+  z-index: 100;
+}
+
+.sidebar ul {
+  list-style: none;
+  padding: 0;
+}
+
+.sidebar li {
+  margin: 1rem 0;
+  cursor: pointer;
+}
+
+.sidebar.show {
+  transform: translateX(0);
+}
+
+.predictions-container {
+  padding: 1rem;
+  max-width: 600px;
+  margin: auto;
 }
 
 .prediction-card {
-  border: 1px solid #ccc;
-  padding: 10px;
-  margin-bottom: 10px;
-  border-radius: 6px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  background: #1a1b1e;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  border-radius: 10px;
 }
 
-form input, form select, form button {
-  margin: 5px 0;
-  padding: 8px;
+.bottom-menu {
+  position: fixed;
+  bottom: 0;
   width: 100%;
-  max-width: 300px;
-  display: block;
+  display: flex;
+  justify-content: space-around;
+  background: #1a1b1e;
+  padding: 0.5rem 0;
 }
