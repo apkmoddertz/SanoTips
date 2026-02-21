@@ -129,19 +129,17 @@ body {
   box-shadow: 0 3px 8px rgba(0,0,0,0.4);
 }
 /* Date label above first match card */
+/* Date label centered above first match card, golden bold */
 .date-header {
   text-align: center;
   font-size: 14px;
-  font-weight: 700;
-  color: #fff;
-  margin: 1rem auto 0.5rem auto;
-  padding: 0.4rem 1rem;
-  border-radius: 12px;
-  background: linear-gradient(135deg, #ff9a9e, #fad0c4, #a18cd1);
-  box-shadow: 0 4px 12px rgba(0,0,0,0.4);
-  display: inline-block;
-  min-width: 120px;
-  white-space: nowrap;
+  font-weight: 900;           /* Extra bold */
+  color: #FFD700;             /* Gold color */
+  margin: 0 auto 0.5rem auto; /* Top 0, bottom 0.5rem */
+  display: block;
+  width: 100%;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 .prediction-left {
   display: flex;
