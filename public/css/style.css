@@ -1,116 +1,169 @@
 body {
-  font-family: sans-serif;
-  background: #141517;
-  color: #eee;
+  font-family: 'Inter', sans-serif;
+  background: #0f1115;
+  color: #fff;
   margin: 0;
   padding: 0;
 }
 
+/* Navbar */
 .navbar {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0.75rem 1rem;
-  background: #1a1b1e;
+  padding: 0.9rem 1rem;
+  background: #181a20;
   position: sticky;
   top: 0;
+  z-index: 1000;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
 }
 
+/* Sidebar */
 .sidebar {
   position: fixed;
   top: 0;
   left: -250px;
   width: 220px;
   height: 100%;
-  background: #1a1b1e;
+  background: #181a20;
   padding-top: 60px;
-  transition: 0.3s;
+  transition: 0.3s ease;
   overflow-y: auto;
+  border-right: 1px solid rgba(255,255,255,0.05);
 }
 
 .sidebar.show {
   left: 0;
 }
 
-.sidebar ul {
-  list-style: none;
-  padding: 0;
-}
-
 .sidebar li {
   padding: 1rem;
   cursor: pointer;
-  border-bottom: 1px solid #333;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+  font-weight: 600;
 }
 
 .sidebar li:hover {
-  background: #222;
+  background: rgba(16,185,129,0.1);
 }
 
+/* Predictions Container */
 .predictions-container {
   max-width: 600px;
-  margin: 1rem auto;
+  margin: 1.5rem auto 80px auto;
   padding: 0 1rem;
 }
 
+/* PREMIUM MATCH CARD */
 .prediction-card {
-  background: #1a1b1e;
-  border: 1px solid #333;
-  border-radius: 12px;
-  padding: 1rem;
-  margin-bottom: 1rem;
+  background: #181a20;
+  border-radius: 18px;
+  padding: 1.3rem;
+  margin-bottom: 1.2rem;
+  border: 1px solid rgba(255,255,255,0.05);
+  transition: 0.3s ease;
 }
 
+.prediction-card:hover {
+  border: 1px solid rgba(16,185,129,.4);
+  transform: translateY(-3px);
+}
+
+/* Header */
 .card-header {
   display: flex;
   justify-content: space-between;
-  margin-bottom: 0.5rem;
-  font-weight: bold;
-  font-size: 0.9rem;
-  color: #aaa;
+  margin-bottom: 0.8rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: #9ca3af;
 }
 
+/* Teams Layout */
 .card-body .teams {
   display: flex;
   justify-content: space-between;
+  align-items: center;
   font-size: 1.1rem;
-  margin-bottom: 0.5rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
 }
 
 .card-body .vs {
-  font-weight: bold;
+  font-size: 0.8rem;
+  font-weight: 800;
+  color: #374151;
 }
 
-.card-body div {
-  margin-bottom: 0.25rem;
+/* Prediction Box */
+.prediction-box {
+  background: #20222a;
+  padding: 1rem;
+  border-radius: 14px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-left: 5px solid #facc15;
 }
 
+.prediction-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.prediction-label {
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  color: #9ca3af;
+  margin-bottom: 4px;
+}
+
+.prediction-value {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #10b981;
+}
+
+.odds {
+  font-size: 1.2rem;
+  font-weight: 800;
+}
+
+/* Bottom Menu */
 .bottom-menu {
   display: flex;
   justify-content: space-around;
   position: fixed;
   bottom: 0;
   width: 100%;
-  background: #1a1b1e;
-  padding: 0.5rem 0;
+  background: #181a20;
+  padding: 0.7rem 0;
+  border-top: 1px solid rgba(255,255,255,0.05);
 }
 
 .bottom-menu button {
   flex: 1;
-  margin: 0 0.25rem;
-  padding: 0.5rem;
+  margin: 0 0.3rem;
+  padding: 0.6rem;
   background: #25262b;
   color: #eee;
   border: none;
-  border-radius: 8px;
+  border-radius: 10px;
+  font-weight: 600;
+  transition: .2s;
 }
 
 .bottom-menu button:hover {
-  background: #333;
+  background: #10b981;
+  color: #000;
 }
 
+/* Empty Message */
 .empty-msg {
   text-align: center;
-  padding: 2rem;
-  color: #777;
+  padding: 3rem;
+  color: #6b7280;
+  font-weight: 600;
 }
