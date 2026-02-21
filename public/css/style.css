@@ -109,7 +109,7 @@ body {
 
 /* Prediction Right */
 .prediction-right { display:flex; flex-direction:column; align-items:center; justify-content:center; gap:5px; }
-.status-icon { width:24px; height:24px; }
+.prediction-right i { font-size:1.4rem; }
 
 /* Odds */
 .odds { font-weight:800; font-size:1.1rem; color:#fff; }
