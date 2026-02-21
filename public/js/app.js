@@ -11,25 +11,21 @@ menuToggle.addEventListener("click", () => {
   sidebar.classList.toggle("show");
 });
 
-// Bootstrap Icons for status
+// SVG icons for status
 const statusIcons = {
-  pending: `<i class="bi bi-hourglass-split text-warning"></i>`,
-  win: `<i class="bi bi-check-circle-fill text-success"></i>`,
-  lose: `<i class="bi bi-x-circle-fill text-danger"></i>`
+  pending: `<svg xmlns="http://www.w3.org/2000/svg" class="status-icon" viewBox="0 0 24 24" fill="none" stroke="#facc15" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>`,
+  win: `<svg xmlns="http://www.w3.org/2000/svg" class="status-icon" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>`,
+  lose: `<svg xmlns="http://www.w3.org/2000/svg" class="status-icon" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>`
 };
 
-// Normalize and map match status to icon
+// Get icon based on match status
 function getStatusIcon(status) {
   if (!status) return statusIcons.pending;
-
-  const s = status.trim().toLowerCase(); // remove spaces + lowercase
-
+  const s = status.trim().toLowerCase();
   const winValues = ["win", "won", "winning"];
   const loseValues = ["lose", "lost", "losing"];
-
   if (winValues.includes(s)) return statusIcons.win;
   if (loseValues.includes(s)) return statusIcons.lose;
-
   return statusIcons.pending;
 }
 
