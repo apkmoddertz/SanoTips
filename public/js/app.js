@@ -7,29 +7,21 @@ const predictionsContainer = document.getElementById("predictions");
 let currentCategory = "free";
 
 // Toggle sidebar
-menuToggle.addEventListener("click", () => {
-  sidebar.classList.toggle("show");
-});
+menuToggle.addEventListener("click", () => sidebar.classList.toggle("show"));
 
-// SVG icons for status
+// Animated SVG icons for status
 const statusIcons = {
-  pending: `<svg xmlns="http://www.w3.org/2000/svg" class="status-icon" viewBox="0 0 24 24" fill="none" stroke="#facc15" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>`,
-  win: `<svg xmlns="http://www.w3.org/2000/svg" class="status-icon" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>`,
-  lose: `<svg xmlns="http://www.w3.org/2000/svg" class="status-icon" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>`
+  pending: `<svg class="status-icon pending" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#facc15" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>`,
+  win: `<svg class="status-icon win" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"><animate attributeName="stroke" values="#10b981;#34d399;#10b981" dur="1.5s" repeatCount="indefinite"/></path></svg>`,
+  lose: `<svg class="status-icon lose" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>`
 };
 
-// Get icon based on match status
 function getStatusIcon(status) {
-  if (!status) return statusIcons.pending;
-  const s = status.trim().toLowerCase();
-  const winValues = ["win", "won", "winning"];
-  const loseValues = ["lose", "lost", "losing"];
-  if (winValues.includes(s)) return statusIcons.win;
-  if (loseValues.includes(s)) return statusIcons.lose;
-  return statusIcons.pending;
+  const s = (status || "pending").toLowerCase();
+  return statusIcons[s] || statusIcons.pending;
 }
 
-// Render matches
+// Render predictions
 async function renderPredictions(category) {
   currentCategory = category;
   predictionsContainer.innerHTML = "<p>Loading...</p>";
@@ -47,7 +39,6 @@ async function renderPredictions(category) {
     filtered.forEach(p => {
       const oddsValue = Number(p.odds || p.odd || 0);
       const formattedDate = new Date(p.date).toLocaleString();
-      const statusIcon = getStatusIcon(p.status);
 
       const card = document.createElement("div");
       card.className = "prediction-card";
@@ -55,7 +46,7 @@ async function renderPredictions(category) {
       card.innerHTML = `
         <div class="card-header">
           <span class="league">${p.league || "-"}</span>
-          <span class="date">${formattedDate}</span>
+          <span class="date" onselectstart="return false;">${formattedDate}</span>
         </div>
 
         <div class="teams-table">
@@ -74,7 +65,7 @@ async function renderPredictions(category) {
             <div class="prediction-text">${p.prediction || "-"}</div>
           </div>
           <div class="prediction-right">
-            ${statusIcon}
+            ${getStatusIcon(p.status)}
             <div class="odds">${oddsValue.toFixed(2)}</div>
           </div>
         </div>
@@ -83,26 +74,20 @@ async function renderPredictions(category) {
       predictionsContainer.appendChild(card);
     });
 
-  } catch (error) {
-    console.error("Error loading predictions:", error);
+  } catch (err) {
+    console.error(err);
     predictionsContainer.innerHTML = "<div class='error-msg'>Error loading predictions.</div>";
   }
 }
 
-// Sidebar click
+// Sidebar & Bottom menu
 document.querySelectorAll(".sidebar li").forEach(li => {
   li.addEventListener("click", () => {
     renderPredictions(li.dataset.category);
     sidebar.classList.remove("show");
   });
 });
-
-// Bottom menu click
-document.querySelectorAll(".bottom-menu button").forEach(btn => {
-  btn.addEventListener("click", () => {
-    renderPredictions(btn.dataset.category);
-  });
-});
+document.querySelectorAll(".bottom-menu button").forEach(btn => btn.addEventListener("click", () => renderPredictions(btn.dataset.category)));
 
 // Initial load
 renderPredictions(currentCategory);
